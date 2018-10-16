@@ -5,6 +5,7 @@
 // 4.sortable
 // 5.fixed height with vertical scroll
 // 6.select certain predefined class
+// 7.filter name in table
 <template>
   <div id="table">
     <h1>{{msg}}</h1>
@@ -16,14 +17,21 @@
       :fetch-suggestions="queryAsync"
       >
     </el-autocomplete> -->
-    <el-input
-      :placeholder="placeholder"
-      v-model="inputName"
-      clearable
-      prefix-icon="el-icon-search"
-      @change="inputChangeHandler"
-      ></el-input>
-    <el-button type="primary" icon="el-icon-plus" circle></el-button>
+    <el-row>
+      <el-col :span="1" >
+        <el-button type="primary" icon="el-icon-plus" circle></el-button>
+      </el-col>
+      <el-col :span="6" :offset="17">
+        <el-input
+        :placeholder="placeholder"
+        v-model="inputName"
+        clearable
+        prefix-icon="el-icon-search"
+        @change="inputChangeHandler"
+        ></el-input>
+      </el-col>
+    </el-row>
+    
     <el-table
       :data="tableData"
       style="width:100%"
