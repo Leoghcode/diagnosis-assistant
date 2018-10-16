@@ -5,6 +5,7 @@ import diagnosisHistory from '@/components/diagnosisHistory'
 import diagnosisPicture from '@/components/diagnosisPicture'
 import HelloWorld from '@/components/HelloWorld'
 import InstanceContainer from '@/components/InstanceContainer'
+import MyTable from '@/components/MyTable'
 
 Vue.use(Router)
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/ic',
       name: 'InstanceContainer',
       component: InstanceContainer
+    },
+    {
+      path: '/table',
+      name: 'MyTable',
+      component: MyTable
     }
   ]
 })
