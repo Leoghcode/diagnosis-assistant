@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 50%; border: 1px solid lightgray">
+  <div class="instanceContainer">
       <div v-show="!showDetail" class="">
         <h2>实例登记表</h2>
         <el-table :data="instances" stripe border height="250"
@@ -24,36 +24,62 @@
         </div>
         <span class="demonstration">skin images</span> -->
         <el-row :gutter="20">
+          <el-col :span="16">
+            <ImageViewer :img-list="images" @imgchange="carouselChange"></ImageViewer>
+          </el-col>
           <el-col :span="8">
-            <div style="text-align: left; padding-bottom: 3px;">
-              <el-button style="margin: 5px;" type="primary" v-on:click="goBackList()">返回</el-button>
+            <div class="text-left padding-bottom-3">
+              <el-button class="margin-5" type="primary" v-on:click="goBackList()">返回</el-button>
+              <el-button class="margin-5" type="success" v-on:click="openIllForm()">创建新病例</el-button>
             </div>
             <div>
-              <el-card class="box-card" style="text-align: left;">
+              <el-card class="box-card text-left">
                 <div slot="header" class="clearfix">
                   <span>预测描述</span>
-                  <el-button style="float: right; padding: 3px 0;" type="text">操作按钮</el-button>
+                  <el-button class="btn-right" type="text">操作按钮</el-button>
                 </div>
-                <div style="margin-top: -20px;">
-                  <p><strong>当前照片:</strong> {{currentImage.name}}</p>
-                  <p><strong>预测结果为：</strong> {{currentImage.result}}</p>
-                  <p><strong>严重程度：</strong> {{currentImage.level}}</p>
-                  <p><strong>建议：</strong> {{currentImage.advice}}</p>
+                <div class="margin-top-m20">
+                  <p><strong>当前照片:</strong> {{curImg.name}}</p>
+                  <p><strong>预测结果为：</strong> {{curImg.result}}</p>
+                  <p><strong>严重程度：</strong> {{curImg.level}}</p>
+                  <p><strong>建议：</strong> {{curImg.advice}}</p>
                 </div>
               </el-card>
             </div>
           </el-col>
-          <el-col :span="16">
-            <el-carousel autodisplay="false" height="" @change="carouselChange">
-              <el-carousel-item v-for="image in images" :key="image.name">
-                <img width="300" height="300" :src="image.image" @click="openDialog(image.image)">
-              </el-carousel-item>
-            </el-carousel>
-          </el-col>
         </el-row>
         <el-row>
-          <el-dialog top="0" modal="true" close-on-click-modal="true" fullscreen="true" :visible.sync="dialogOpen">
-            <img :src="dialogImg">
+          <el-dialog title="新建病例" :visible.sync="illFormMode">
+            <el-row>
+              <el-col :span="16" :offset="4">
+                <el-form :model="illForm" label-width="80px">
+                  <el-form-item label="病人">
+                    <el-col :span="10">
+                      <el-input v-model="illForm.name" clearable></el-input>
+                    </el-col>
+                  </el-form-item>
+                  <el-form-item label="时间">
+                    <div class="text-left">
+                      <el-date-picker v-model="illForm.datetime" type="datetime"
+                        placeholder="选择日期时间">
+                      </el-date-picker>
+                    </div>
+                  </el-form-item>
+                  <el-form-item label="照片">
+                    <el-upload
+                      action="http://localhost:8888/upload"
+                      list-type="picture-card"
+                      multiple>
+                      <i class="el-icon-plus"></i>
+                    </el-upload>
+                  </el-form-item>
+                  <el-form-item label="处方">
+                    <el-input type="textarea" v-model="illForm.prescription"
+                     :autosize="{minRows: 3, maxRows: 6}"></el-input>
+                  </el-form-item>
+                </el-form>
+              </el-col>
+            </el-row>
           </el-dialog>
         </el-row>
       </div>
@@ -61,6 +87,8 @@
 </template>
 
 <script>
+import ImageViewer from './common/ImageViewer';
+
 const instances = [
   {
     date: '2016-05-02',
@@ -98,7 +126,6 @@ const instances = [
     address: '上海市普陀区金沙江路1521弄'
   }
 ];
-
 import skin_1 from '../assets/skin/skin_1.jpg'
 import skin_2 from '../assets/skin/skin_2.jpg'
 import skin_3 from '../assets/skin/skin_3.jpg'
@@ -109,18 +136,24 @@ const images = [
   {image: skin_3, name: 'skin_3.jpg', result: '皮肤病C', level: '严重', advice: '立即就医'},
   {image: skin_4, name: 'skin_4.jpg', result: '皮肤病D', level: '紧急', advice: '立即就医'}
 ];
-
 export default {
   name: 'InstanceContainer',
   data(){
     return {
       instances: instances,
-      images: images,
       showDetail: false,
-      currentImage: {},
-      dialogOpen: false,
-      dialogImg: ''
+      images: images,
+      curImg: {},
+      illFormMode: false,
+      illForm: {
+        name: '',
+        datetime: '',
+        prescription: ''
+      }
     }
+  },
+  components: {
+    ImageViewer: ImageViewer
   },
   methods: {
     handleClick(row) {
@@ -131,18 +164,22 @@ export default {
     goBackList() {
       this.showDetail = false;
     },
-    carouselChange(itemIndex) {
-      this.currentImage = images[itemIndex];
+    carouselChange(imgIndex) {
+      this.curImg = this.images[imgIndex];
     },
-    openDialog(imagePath) {
-      this.dialogOpen = true;
-      this.dialogImg = imagePath;
+    openIllForm() {
+      this.illFormMode = true;
     }
   }
 }
 </script>
 
 <style scoped>
+  .instanceContainer {
+    width: 50%;
+    border: 1px solid lightgray;
+  }
+
   .el-carousel__item h3 {
     color: #475669;
     font-size: 14px;
@@ -170,4 +207,24 @@ export default {
   .box-card {
     max-height: 242px;
   }
+
+  .margin-top-m20 {
+    margin-top: -20px;
+  }
+  .padding-bottom-3 {
+    padding-bottom: 3px;
+  }
+  .margin-5 {
+    margin: 5px;
+  }
+
+  .btn-right {
+    float: right;
+    padding: 3px 0;
+  }
+
+  .text-left {
+    text-align: left;
+  }
+
 </style>
