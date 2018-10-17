@@ -2,7 +2,7 @@
   <div class="history">
     <!--<h1>{{ msg }}</h1>-->
     <div class="text-right margin-bottom-10">
-      <el-button type="primary" plain>创建新病例</el-button>
+      <el-button type="primary" plain @click="openIllForm">创建新病例</el-button>
     </div>
     <hr />
     <el-table
@@ -11,7 +11,6 @@
       height="250"
       :default-sort = "{prop: 'date', order: 'descending'}">
       <el-table-column
-        fixed
         prop="date"
         label="日期"
         sortable
@@ -38,12 +37,20 @@
         >
       </el-table-column>
     </el-table>
+    <el-row>
+      <ill-case-form :open="illFormOpen" @close="illFormOpen = false"></ill-case-form>
+    </el-row>
   </div>
 </template>
 
 <script>
+  import illCaseForm from './sub/illCaseForm';
+
   export default {
-    name: 'HelloWorld',
+    name: 'diagnosisHistory',
+    components: {
+      illCaseForm: illCaseForm
+    },
     data () {
       return {
         msg: '病例列表与诊断历史图片界面展示',
@@ -95,8 +102,14 @@
           hospital: '嘉定中心医院',
           diagnose_res: '股癣',
           prescription: '股癣药膏',
-        }]
+        }],
+        illFormOpen: false,
       }
+    },
+    methods: {
+      openIllForm() {
+        this.illFormOpen = true;
+      },
     }
   }
 </script>
@@ -121,7 +134,6 @@
     text-align: right;
   }
   .history {
-    width: 50%;
   }
   .margin-bottom-10 {
     margin-bottom: 10px;

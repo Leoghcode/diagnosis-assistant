@@ -1,11 +1,11 @@
-// Table component features:
+<!-- // Table component features:
 // 1.dragable border
 // 2.single select
 // 3.search bar
 // 4.sortable
 // 5.fixed height with vertical scroll
 // 6.select certain predefined class
-// 7.filter name in table
+// 7.filter name in table -->
 <template>
   <div id="table">
     <h1>{{msg}}</h1>
@@ -17,7 +17,7 @@
       :fetch-suggestions="queryAsync"
       >
     </el-autocomplete> -->
-    <el-row>
+    <el-row class="margin-bottom-10">
       <el-col :span="1" >
         <el-button type="primary" icon="el-icon-plus" circle></el-button>
       </el-col>
@@ -31,17 +31,15 @@
         ></el-input>
       </el-col>
     </el-row>
-    
+
     <el-table
       :data="tableData"
       style="width:100%"
       border
-      max-height=150
       highlight-current-row
       :default-sort="{prop: 'index',order: 'ascending'}"
     >
       <el-table-column
-        fixed
         prop="index"
         label="序号"
         sortable
@@ -72,7 +70,7 @@ export default {
     return{
       tableData:[],
       store:[],
-      msg:"I'm the king of the world!",
+      msg:"",
       placeholder:'请输入姓名',
       inputName:'',
       filters:[{text:'一级',value:1},{text:'二级',value:2},{text:'三级',value:3}],
@@ -130,6 +128,8 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
+  .margin-bottom-10 {
+    margin-bottom: 10px;
+  }
 </style>
