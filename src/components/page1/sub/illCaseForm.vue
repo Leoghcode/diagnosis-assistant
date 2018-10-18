@@ -68,6 +68,8 @@
 </template>
 
 <script type="text/javascript">
+import options from '../../../assets/mock/mockDiseases';
+import {presOptions,presDetails} from '../../../assets/mock/mockPresTemplates';
   export default {
     name: 'illCaseForm',
     props: [
@@ -177,91 +179,6 @@
     },
 
   }
-
-
-  const options = [
-    {
-      value: '病A',
-      label: '病A'
-    }, {
-      value: '病B',
-      label: '病B'
-    }, {
-      value: '病C',
-      label: '病C'
-    }, {
-      value: '病D',
-      label: '病D'
-    }, {
-      value: '病E',
-      label: '病E'
-    }
-  ];
-  const presOptions = {
-    '病A': ['处方A-1', '处方A-2', '处方A-3'],
-    '病B': ['处方B-1', '处方B-2'],
-    '病C': ['处方C-1', '处方C-2', '处方C-3'],
-    '病D': ['处方D-1'],
-    '病E': ['处方E-1', '处方E-2']
-  };
-  const presDetails = {
-    '处方A-1': [
-      {medicine: '药A', number: '12g'},
-      {medicine: '药B', number: '6片'},
-      {medicine: '药C', number: '2瓶'},
-      {medicine: '药D', number: '1盒'}
-    ],
-    '处方A-2': [
-      {medicine: '药D', number: '2.5g'},
-      {medicine: '药B', number: '3片'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-    '处方A-3': [
-      {medicine: '药A', number: '15g'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-    '处方B-1': [
-      {medicine: '药A', number: '12g'},
-      {medicine: '药B', number: '6片'},
-      {medicine: '药C', number: '2瓶'},
-      {medicine: '药D', number: '1盒'}
-    ],
-    '处方B-2': [
-      {medicine: '药D', number: '2.5g'},
-      {medicine: '药B', number: '3片'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-    '处方C-1': [
-      {medicine: '药A', number: '12g'},
-      {medicine: '药B', number: '6片'},
-      {medicine: '药C', number: '2瓶'},
-      {medicine: '药D', number: '1盒'}
-    ],
-    '处方C-2': [
-      {medicine: '药D', number: '2.5g'},
-      {medicine: '药B', number: '3片'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-    '处方C-3': [
-      {medicine: '药A', number: '15g'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-    '处方D-1': [
-      {medicine: '药A', number: '12g'},
-      {medicine: '药B', number: '6片'},
-      {medicine: '药C', number: '2瓶'},
-      {medicine: '药D', number: '1盒'}
-    ],
-    '处方E-1': [
-      {medicine: '药D', number: '2.5g'},
-      {medicine: '药B', number: '3片'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-    '处方E-2': [
-      {medicine: '药A', number: '15g'},
-      {medicine: '药C', number: '1瓶'}
-    ],
-  };
 </script>
 
 <style scoped>
