@@ -98,7 +98,7 @@
       },
       dialogOpen: function(val) {
         if(val == false) {
-          this.$emit('close');
+          this.$emit('update:open', false);
         }
       },
       illList: function(newList) {

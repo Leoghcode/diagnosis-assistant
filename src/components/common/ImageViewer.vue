@@ -31,15 +31,17 @@ export default {
       images: this.imgList,
       imageMode: false,
       dialogImg: '',
-      curImg: ''
+      curImg: 0
     }
   },
   props: ['imgList'],
   watch: {
-    imgList: function(val) {
-      // 当外部的imgList改变时，imgViewer的副本images也需要相应改变。
-      // 当内部的images因为编辑改变时，同样需要改变外部的imgList。
-      this.images = this.imgList;
+    imgList: {
+      handler(val) {
+        // 当外部的imgList改变时，imgViewer的副本images也需要相应改变。
+        // 当内部的images因为编辑改变时，同样需要改变外部的imgList。
+        this.images = this.imgList;
+      }
     }
   },
   methods: {

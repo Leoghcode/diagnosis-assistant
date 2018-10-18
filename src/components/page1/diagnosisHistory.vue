@@ -38,7 +38,7 @@
       </el-table-column>
     </el-table>
     <el-row>
-      <ill-case-form :open="illFormOpen" @close="illFormOpen = false"></ill-case-form>
+      <ill-case-form :open.sync="illFormOpen"></ill-case-form>
     </el-row>
   </div>
 </template>
