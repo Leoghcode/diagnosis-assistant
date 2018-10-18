@@ -1,6 +1,6 @@
 <template>
 <div>
-  <el-carousel autodisplay="false" height="" @change="carouselChange">
+  <el-carousel :autoplay="false" height="" @change="carouselChange">
     <el-carousel-item v-for="image in images" :key="image.name">
       <img width="300" height="300" :src="image.image" @click="openDialog(image.image)">
     </el-carousel-item>

@@ -3,12 +3,12 @@
     <el-row class="row1" :gutter="15">
       <el-col :sm="24" :md="12">
         <el-card class="box-card-300">
-          <ill-instance></ill-instance>
+          <ill-instance @choose="handleInstanceChoose($event)"></ill-instance>
         </el-card>
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-300">
-          <search-patient></search-patient>
+          <search-patient :name="searchName"></search-patient>
         </el-card>
       </el-col>
     </el-row>
@@ -43,11 +43,13 @@
     },
     data() {
       return {
-
+        searchName: ''
       }
     },
     methods: {
-
+      handleInstanceChoose(patientName) {
+        this.searchName = patientName;
+      }
     }
   }
 </script>

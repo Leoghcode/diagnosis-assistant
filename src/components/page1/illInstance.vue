@@ -4,13 +4,13 @@
         <h2>实例登记表</h2>
         <el-table :data="instances" stripe border height="200"
           size="mini" highlight-current-row>
-          <el-table-column sortable prop="date" label="日期">
+          <el-table-column sortable prop="date" label="日期" width="100">
           </el-table-column>
-          <el-table-column prop="name" label="姓名">
+          <el-table-column prop="name" label="姓名" width="100">
           </el-table-column>
           <el-table-column prop="address" label="地址">
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="100">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text">查看</el-button>
               </template>
@@ -77,17 +77,17 @@ const instances = [
   },
     {
     date: '2017-07-03',
-    name: '王小刚',
+    name: '王小明',
     address: '上海市普陀区金沙江路1519弄'
   },
   {
     date: '2018-02-20',
-    name: '王晓协',
+    name: '王晓强',
     address: '上海市普陀区金沙江路1520弄'
   },
   {
     date: '2018-09-02',
-    name: '王晓航',
+    name: '王晓芳',
     address: '上海市普陀区金沙江路1521弄'
   }
 ];
@@ -119,9 +119,11 @@ export default {
       console.log(row);
       console.log(row.address);
       this.showDetail = true;
+      this.$emit('choose', row.name);
     },
     goBackList() {
       this.showDetail = false;
+      this.$emit('choose', '');
     },
     carouselChange(imgIndex) {
       this.curImg = this.images[imgIndex];
@@ -181,5 +183,4 @@ export default {
   .text-left {
     text-align: left;
   }
-
 </style>
