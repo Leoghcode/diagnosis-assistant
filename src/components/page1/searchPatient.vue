@@ -35,7 +35,7 @@
       ></el-table-column>
       <el-table-column
         prop="id"
-        label="身份证号"
+        label="手机号"
         sortable
       ></el-table-column>
       <el-table-column
