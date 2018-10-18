@@ -6,7 +6,7 @@
     </div>
     <hr />
     <el-table
-      :data="tableData3"
+      :data="filterHistories"
       style="width: 100%"
       height="250"
       :default-sort = "{prop: 'date', order: 'descending'}">
@@ -36,6 +36,14 @@
         label="处方"
         >
       </el-table-column>
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="100">
+        <template slot-scope="scope">
+          <el-button @click="checkDetail(scope.row)" type="text" size="small">查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-row>
       <ill-case-form :open.sync="illFormOpen"></ill-case-form>
@@ -47,7 +55,6 @@
   import illCaseForm from './sub/illCaseForm';
   import mockHistory from '../../assets/mock/mockHistory';
 
-
   export default {
     name: 'diagnosisHistory',
     components: {
@@ -56,14 +63,35 @@
     data () {
       return {
         msg: '病例列表与诊断历史图片界面展示',
-        tableData3: mockHistory,
         illFormOpen: false,
+        filterHistories: []
+      }
+    },
+    props: [
+      'name'
+    ],
+    watch: {
+      name:function(val){
+        this.searchName(val);
       }
     },
     methods: {
       openIllForm() {
         this.illFormOpen = true;
       },
+      searchName(val){
+        if(val == ''){
+          this.filterHistories = [];
+        }
+        for(var i = 0; i < mockHistory.length; i++){
+          if(mockHistory[i].name == val){
+            this.filterHistories.push(mockHistory[i]);
+          }
+        }
+      },
+      checkDetail(val){
+        this.$emit('check-detail', val);
+      }
     }
   }
 </script>

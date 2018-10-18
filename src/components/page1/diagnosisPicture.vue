@@ -3,30 +3,13 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="病例图片" name="first">
         <div>
-          <image-viewer :img-list="images"></image-viewer>
+          <image-viewer :img-list="imgList"></image-viewer>
         </div>
       </el-tab-pane>
       <el-tab-pane label="病例处方" name="second">
         <el-row>
           <div class="prescription">
-            <h2 class="">处方如下：</h2>
-            <div class="">
-              <div class="text item">
-                1. xxxxxxxxxx
-              </div>
-              <div class="text item">
-                2. xxxxxxxxxxxxxxxxxxx
-              </div>
-              <div class="text item">
-                3. xxxxxxxxxxx
-              </div>
-              <div class="text item">
-                4. xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-              </div>
-              <div class="text item">
-                5. xxxxxxxxxxx
-              </div>
-            </div>
+            {{details}}
           </div>
         </el-row>
       </el-tab-pane>
@@ -41,13 +24,14 @@
 
 <script>
   import ImageViewer from "../common/ImageViewer";
-  import images from "../../assets/mock/FakeImageData";
 
   export default {
+    props: [
+      'imgList', 'details'
+    ],
     data() {
       return {
-        activeName: 'first',
-        images: images
+        activeName: 'first'
       };
     },
     components: {
