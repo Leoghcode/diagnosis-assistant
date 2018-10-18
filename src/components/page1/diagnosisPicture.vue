@@ -41,7 +41,7 @@
 
 <script>
   import ImageViewer from "../common/ImageViewer";
-  import images from "../common/FakeImageData";
+  import images from "../../assets/mock/FakeImageData";
 
   export default {
     data() {
