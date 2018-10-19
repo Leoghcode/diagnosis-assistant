@@ -9,13 +9,18 @@
 <div>
   <el-carousel :autoplay="false" height="" @change="carouselChange">
     <el-carousel-item v-for="image in images" :key="image.name">
-      <img width="300" height="300" :src="image.image" @click="openDialog(image.image)">
+      <img width="300" height="300" :src="image.image" @click="openDialog()">
     </el-carousel-item>
   </el-carousel>
   <div>
     <el-row>
-      <el-dialog top="0" :modal="true" :visible.sync="imageMode">
-        <img width="100%" :src="dialogImg">
+      <el-dialog top="0" custom-class="img-dialog" :fullscreen="true" :modal="true" :visible.sync="imageMode">
+        <!-- <img width="50%" :src="dialogImg"> -->
+        <el-carousel :initial-index="curImg" :autoplay="false" height="600px">
+          <el-carousel-item v-for="image in images" :key="image.name">
+            <img width="50%" :src="image.image">
+          </el-carousel-item>
+        </el-carousel>
       </el-dialog>
     </el-row>
   </div>
@@ -47,12 +52,17 @@ export default {
   methods: {
     openDialog(imagePath) {
       this.imageMode = true;
-      this.dialogImg = imagePath;
     },
     carouselChange(itemIndex) {
       this.curImg = itemIndex;
       this.$emit('imgchange', itemIndex);
-    },
+    }
   }
 }
 </script>
+
+<style scoped>
+  /*.img-dialog {
+    background: transparent!important;
+  }*/
+</style>

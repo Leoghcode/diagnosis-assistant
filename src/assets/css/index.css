@@ -1,0 +1,10 @@
+.img-dialog {
+  background: transparent!important;
+}
+
+.img-dialog .el-dialog__header button {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: black;
+}

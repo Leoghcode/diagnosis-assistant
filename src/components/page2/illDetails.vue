@@ -2,7 +2,7 @@
   <div id="illDetails">
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="图片库" name="image-tab">
-        <el-row gutter="20">
+        <el-row :gutter="20">
           <el-col :span="15">
             <image-viewer :img-list="images"></image-viewer>
           </el-col>
