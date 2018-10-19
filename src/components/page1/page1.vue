@@ -15,12 +15,12 @@
     <el-row :gutter="15">
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-history></diagnosis-history>
+          <diagnosis-history :name="searchName" @check-detail="checkDetail($event)"></diagnosis-history>
         </el-card>
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-picture></diagnosis-picture>
+          <diagnosis-picture :img-list="imgList" :details="presDetail"></diagnosis-picture>
         </el-card>
       </el-col>
     </el-row>
@@ -43,12 +43,21 @@
     },
     data() {
       return {
-        searchName: ''
+        searchName: '',
+        imgList: [],
+        presDetail: ''
       }
     },
     methods: {
       handleInstanceChoose(patientName) {
         this.searchName = patientName;
+      },
+      checkDetail(patientHistory) {
+        console.log("checkDetail");
+        console.log(patientHistory.images);
+
+        this.imgList = patientHistory.images;
+        this.presDetail = patientHistory.prescriptionDetail;
       }
     }
   }

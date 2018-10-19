@@ -6,7 +6,7 @@
     </div>
     <hr />
     <el-table
-      :data="tableData3"
+      :data="filterHistories"
       style="width: 100%"
       height="250"
       :default-sort = "{prop: 'date', order: 'descending'}">
@@ -36,6 +36,14 @@
         label="处方"
         >
       </el-table-column>
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="100">
+        <template slot-scope="scope">
+          <el-button @click="checkDetail(scope.row)" type="text" size="small">查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-row>
       <ill-case-form :open.sync="illFormOpen"></ill-case-form>
@@ -45,6 +53,7 @@
 
 <script>
   import illCaseForm from './sub/illCaseForm';
+  import mockHistory from '../../assets/mock/mockHistory';
 
   export default {
     name: 'diagnosisHistory',
@@ -54,62 +63,35 @@
     data () {
       return {
         msg: '病例列表与诊断历史图片界面展示',
-        tableData3: [{
-          date: '2018-05-07',
-          name: '王小虎',
-          hospital: '嘉定中心医院',
-          diagnose_res: '湿疹',
-          prescription: '盐酸左氧氟沙星0.4g静脉输液',
-        },{
-          date: '2018-07-05',
-          name: '王小虎',
-          hospital: '嘉定中心医院',
-          diagnose_res: '湿疹',
-          prescription: '上清片',
-        },{
-          date: '2018-07-12',
-          name: '王小虎',
-          hospital: '嘉定中心医院',
-          diagnose_res: '湿疹',
-          prescription: '甲硝锉片',
-        },{
-          date: '2018-07-27',
-          name: '王小虎',
-          hospital: '嘉定中心医院',
-          diagnose_res: '湿疹',
-          prescription: '盐酸左氧氟沙星0.4g静脉输液',
-        },{
-          date: '2018-08-23',
-          name: '王小虎',
-          hospital: '同济大学校医院',
-          diagnose_res: '粉刺',
-          prescription: '维生素C0.5g静脉输液',
-        },{
-          date: '2018-08-30',
-          name: '王小虎',
-          hospital: '嘉定中心医院',
-          diagnose_res: '粉刺',
-          prescription: '盐酸左氧氟沙星0.4g静脉输液',
-        },{
-          date: '2018-09-07',
-          name: '王小虎',
-          hospital: '同济大学校医院嘉定分院',
-          diagnose_res: '股癣',
-          prescription: '股癣药膏',
-        },{
-          date: '2018-09-22',
-          name: '王小虎',
-          hospital: '嘉定中心医院',
-          diagnose_res: '股癣',
-          prescription: '股癣药膏',
-        }],
         illFormOpen: false,
+        filterHistories: []
+      }
+    },
+    props: [
+      'name'
+    ],
+    watch: {
+      name:function(val){
+        this.searchName(val);
       }
     },
     methods: {
       openIllForm() {
         this.illFormOpen = true;
       },
+      searchName(val){
+        if(val == ''){
+          this.filterHistories = [];
+        }
+        for(var i = 0; i < mockHistory.length; i++){
+          if(mockHistory[i].name == val){
+            this.filterHistories.push(mockHistory[i]);
+          }
+        }
+      },
+      checkDetail(val){
+        this.$emit('check-detail', val);
+      }
     }
   }
 </script>
