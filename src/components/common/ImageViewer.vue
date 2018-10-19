@@ -8,9 +8,9 @@
 <template>
 <div>
   <span class="notice">{{ notice }}</span>
-  <el-carousel :autoplay="false" height="" @change="carouselChange">
+  <el-carousel v-show="emptyImgList" :autoplay="false" height="" @change="carouselChange">
     <el-carousel-item v-for="image in images" :key="image.name">
-      <img width="300" height="300" :src="image.image" @click="openDialog()">
+      <img :width="imgWidth" :height="imgHeight" :src="image.image" @click="openDialog()">
     </el-carousel-item>
   </el-carousel>
   <div>
@@ -41,7 +41,7 @@ export default {
       curImg: 0
     }
   },
-  props: ['imgList'],
+  props: ['imgList', 'width', 'height'],
   watch: {
     imgList: {
       handler(val) {
@@ -54,6 +54,15 @@ export default {
   computed: {
     notice: function() {
       return this.images.length ? '第(' + (this.curImg + 1) + '/' + this.images.length + ')张图片' : '';
+    },
+    emptyImgList: function() {
+      return this.images.length ? true : false;
+    },
+    imgWidth: function() {
+      return this.width ? this.width : 300;
+    },
+    imgHeight: function() {
+      return this.height ? this.height : 300;
     }
   },
   methods: {
