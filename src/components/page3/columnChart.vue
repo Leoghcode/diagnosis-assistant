@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :id="id" :style="{height:height,width:width}" ref="myEchart">
+  <div :class="className" :id="id" :style="{height:height,width:width}" ref="columnEchart">
   </div>
 </template>
 <script>
@@ -20,7 +20,7 @@ export default {
     },
     height: {
       type: String,
-      default: '500px'
+      default: '350px'
     }
   },
   data() {
@@ -40,10 +40,15 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$refs.myEchart);
+      this.chart = echarts.init(this.$refs.columnEchart);
       // 把配置和数据放这里
       this.chart.setOption({
         color: ['#3398DB'],
+        title: {
+        text: '某医院患者数量统计',
+        subtext: '纯属虚构',
+        x:'center'
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
