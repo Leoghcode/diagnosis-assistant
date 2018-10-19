@@ -8,19 +8,19 @@
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-300">
-          <search-patient :name="searchName"></search-patient>
+          <search-patient :query="searchQueryString" :loading.sync="autoSearch1" @check-history="checkHistory($event)"></search-patient>
         </el-card>
       </el-col>
     </el-row>
     <el-row :gutter="15">
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-history :name="searchName" @check-detail="checkDetail($event)"></diagnosis-history>
+          <diagnosis-history :query="historyQueryString" @check-detail="checkDetail($event)" :loading.sync="autoSearch2"></diagnosis-history>
         </el-card>
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-picture :img-list="imgList" :details="presDetail"></diagnosis-picture>
+          <diagnosis-picture :img-list="historyDetail.imgList" :details="historyDetail.presDetail"></diagnosis-picture>
         </el-card>
       </el-col>
     </el-row>
@@ -43,21 +43,44 @@
     },
     data() {
       return {
-        searchName: '',
-        imgList: [],
-        presDetail: ''
+        searchQueryString: '',
+        historyQueryString: '',
+        historyDetail: {
+          imgList: [],
+          presDetail: ''
+        },
+        autoSearch1: false,
+        autoSearch2: false,
+      }
+    },
+    watch: {
+      searchQueryString: function(val) {
+        if(val != '') {
+          this.autoSearch1 = true;
+        }
+      },
+      historyQueryString: function(val) {
+        this.emptyDetail();
+        if(val != '') {
+          this.autoSearch2 = true;
+        }
       }
     },
     methods: {
-      handleInstanceChoose(patientName) {
-        this.searchName = patientName;
+      handleInstanceChoose(patientId) {
+        this.searchQueryString = patientId;
+        this.historyQueryString = patientId;
       },
       checkDetail(patientHistory) {
-        console.log("checkDetail");
-        console.log(patientHistory.images);
-
-        this.imgList = patientHistory.images;
-        this.presDetail = patientHistory.prescriptionDetail;
+        this.historyDetail.imgList = patientHistory.images;
+        this.historyDetail.presDetail = patientHistory.prescriptionDetail;
+      },
+      checkHistory(historyQueryString) {
+        this.historyQueryString = historyQueryString;
+      },
+      emptyDetail() {
+        this.historyDetail.imgList = [];
+        this.historyDetail.presDetail = '';
       }
     }
   }

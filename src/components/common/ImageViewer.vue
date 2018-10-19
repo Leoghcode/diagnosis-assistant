@@ -7,6 +7,7 @@
  -->
 <template>
 <div>
+  <span class="notice">{{ notice }}</span>
   <el-carousel :autoplay="false" height="" @change="carouselChange">
     <el-carousel-item v-for="image in images" :key="image.name">
       <img width="300" height="300" :src="image.image" @click="openDialog()">
@@ -16,6 +17,7 @@
     <el-row>
       <el-dialog top="0" custom-class="img-dialog" :fullscreen="true" :modal="true" :visible.sync="imageMode">
         <!-- <img width="50%" :src="dialogImg"> -->
+        <span class="notice">{{ notice }}</span>
         <el-carousel :initial-index="curImg" :autoplay="false" height="600px">
           <el-carousel-item v-for="image in images" :key="image.name">
             <img width="50%" :src="image.image">
@@ -49,6 +51,11 @@ export default {
       }
     }
   },
+  computed: {
+    notice: function() {
+      return this.images.length ? '第(' + (this.curImg + 1) + '/' + this.images.length + ')张图片' : '';
+    }
+  },
   methods: {
     openDialog(imagePath) {
       this.imageMode = true;
@@ -65,4 +72,8 @@ export default {
   /*.img-dialog {
     background: transparent!important;
   }*/
+  .notice {
+    display: block;
+    font-size: 14px;
+  }
 </style>
