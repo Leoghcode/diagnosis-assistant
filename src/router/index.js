@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import page1 from '@/components/page1/page1'
 import nurse from '@/components/nurse/nurse'
+import table from '@/components/common/PaulExp'
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router({
       path: '/nurse',
       name: 'nurse',
       component: nurse
+    },
+    {
+      path: '/table',
+      name: 'table',
+      component: table
     }
   ]
 })

@@ -1,25 +1,9 @@
-<!-- // Table component features:
-// 1.dragable border
-// 2.single select
-// 3.search bar
-// 4.sortable
-// 5.fixed height with vertical scroll
-// 6.select certain predefined class
-// 7.filter name in table -->
 <template>
   <div id="table">
     <h1>{{msg}}</h1>
-    <!-- <el-autocomplete
-      :placeholder="placeholder"
-      v-model="inputName"
-      clearable
-      prefix-icon="el-icon-search"
-      :fetch-suggestions="queryAsync"
-      >
-    </el-autocomplete> -->
     <el-row class="margin-bottom-10">
       <el-col :span="1" >
-        <el-button type="primary" icon="el-icon-plus" circle></el-button>
+        <el-button @click="signalAdd()" type="primary" icon="el-icon-plus" circle></el-button>
       </el-col>
       <el-col :span="6" :offset="17">
         <el-input
@@ -39,78 +23,54 @@
       highlight-current-row
       :default-sort="{prop: 'index',order: 'ascending'}"
     >
-      <el-table-column
-        prop="index"
-        label="序号"
-        sortable
-      ></el-table-column>
-      <el-table-column
-        prop="value"
-        label="姓名"
-        sortable
-      ></el-table-column>
-      <el-table-column
-        prop="id"
-        label="身份证号"
-        sortable
-      ></el-table-column>
-      <el-table-column
-        prop="risk"
-        label="风险等级"
-        :filters="filters"
-        :filter-method="filterHandler"
-      ></el-table-column>
+      <slot></slot>
+      <el-table-column label="操作" width="100">
+              <template slot-scope="scope" >
+                <!-- 耦合editFlag -->
+                <span v-show="!scope.row.editFlag">
+                  <el-button v-show="editable" @click="signalEdit(scope.row)" type="text">修改 </el-button>
+                  <el-button v-show="deletable" @click="signalDelete(scope.row)" type="text">删除 </el-button>
+                </span>
+                <span v-show="scope.row.editFlag">
+                  <el-button v-show="editable" @click="signalAccept(scope.row)" type="text">确认 </el-button>
+                  <el-button v-show="editable" @click="signalCancel(scope.row)" type="text">取消 </el-button>
+                </span>
+              </template>
+          </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script>
 export default {
-  data(){
-    return{
-      tableData:[],
-      store:[],
-      msg:"",
-      placeholder:'请输入姓名',
-      inputName:'',
-      filters:[{text:'一级',value:1},{text:'二级',value:2},{text:'三级',value:3}],
-      timeout:null,
+  name: 'tableTemplate',
+  data() {
+    return {
+      colNum: null,
+      tableData: [],
+      msg: '',
+      inputName: '',
+      editLock: false,
     };
   },
+  props: {
+    'name':String,
+    'store':Array|Object,
+    'placeholder':String,
+    'deletable':Boolean,
+    'editable':Boolean,
+  },
+  watch: {
+    name: function(val) {
+      this.inputName = val;
+      this.inputChangeHandler(this.inputName);
+    },
+    store: function(val){
+      this.tableData=val;
+      console.log("in watch store");
+    }
+  },
   methods:{
-    loadAll(){
-      var tableData=[{
-        index:1,
-        value:"Alice",//the input suggestion can only be called "value"
-        id:"4502031",
-        risk:1
-      },{
-        index:2,
-        value:"Billy",
-        id:"4502032",
-        risk:3
-      },{
-        index:3,
-        value:"Carol",
-        id:"4502033",
-        risk:2
-      }];
-      return tableData;
-    },
-    filterHandler(value,row,cloumn){
-      return row.risk===value;
-    },
-    queryAsync(queryString,cb){
-      var tableData=this.tableData;
-      var result=queryString?tableData.filter(this.createStateFilter(queryString)):tableData;
-
-      console.log(result);
-
-      clearTimeout(this.timeout);
-      this.timeout=setTimeout(()=>{
-        cb(result);
-      },3000*Math.random());
-    },
     createStateFilter(queryString){
       return (state)=>{
         return (state.value.toLowerCase().indexOf(queryString.toLowerCase())===0);
@@ -119,11 +79,51 @@ export default {
     inputChangeHandler(queryString){
       var tableData=this.store;
       this.tableData=queryString?tableData.filter(this.createStateFilter(queryString)):tableData;
-    }
+    },
+    signalDelete(row) {
+      if(this.editLock){
+        this.triggerEditLock();
+        return;
+      }
+      this.$emit('my-delete', row);
+      console.log("signal delete");
+    },
+    signalEdit(row){
+      if(this.editLock){
+        this.triggerEditLock();
+        return;
+      }
+      this.editLock=true;
+      this.$emit('my-edit',row);
+      console.log("signal edit");
+    },
+    signalAdd(){
+      if(this.editLock){
+        this.triggerEditLock();
+        return;
+      }
+      this.editLock=true;
+      this.$emit('my-add');
+      console.log("signal add");
+    },
+    signalAccept(row){
+      this.editLock=false;
+      this.$emit('accept',row);
+    },
+    signalCancel(row){
+      this.editLock=false;
+      this.$emit('cancel',row);
+    },
+    triggerEditLock(){
+      //handle modification conflict
+      alert("请先完成当前条目的编辑");
+    },
   },
   mounted(){
-    this.store=this.loadAll();
-    this.tableData=this.store
+    this.tableData=this.store;
+    // var rootElem = this.$el;
+    // this.tableElem = rootElem.getElementsByTagName("table")[0];
+    // this.colNum = this.tableElem.rows[0].cells.length;
   }
 };
 </script>
