@@ -5,13 +5,13 @@
       <el-col :span="1" >
         <el-button @click="signalAdd()" type="primary" icon="el-icon-plus" circle></el-button>
       </el-col>
-      <el-col :span="6" :offset="17">
+      <el-col :span="6" :offset="17" v-show="!(searchColName===undefined)">
         <el-input
         :placeholder="placeholder"
         v-model="inputName"
         clearable
         prefix-icon="el-icon-search"
-        @change="inputChangeHandler"
+        @input="inputChangeHandler"
         ></el-input>
       </el-col>
     </el-row>
@@ -27,11 +27,11 @@
       <el-table-column label="操作" width="100">
               <template slot-scope="scope" >
                 <!-- 耦合editFlag -->
-                <span v-show="!scope.row.editFlag">
+                <span v-show="!scope.row[editFlagName]">
                   <el-button v-show="editable" @click="signalEdit(scope.row)" type="text">修改 </el-button>
                   <el-button v-show="deletable" @click="signalDelete(scope.row)" type="text">删除 </el-button>
                 </span>
-                <span v-show="scope.row.editFlag">
+                <span v-show="scope.row[editFlagName]">
                   <el-button v-show="editable" @click="signalAccept(scope.row)" type="text">确认 </el-button>
                   <el-button v-show="editable" @click="signalCancel(scope.row)" type="text">取消 </el-button>
                 </span>
@@ -48,35 +48,42 @@ export default {
     return {
       colNum: null,
       tableData: [],
-      msg: '',
-      inputName: '',
+      msg: "",
+      inputName: "",
       editLock: false,
+      testString:"test",
     };
   },
   props: {
-    'name':String,
+    'queryString':String,
     'store':Array|Object,
     'placeholder':String,
     'deletable':Boolean,
     'editable':Boolean,
+    'searchColName':String,
+    'editFlagName':String,
   },
   watch: {
-    name: function(val) {
+    queryString: function(val) {
       this.inputName = val;
       this.inputChangeHandler(this.inputName);
     },
     store: function(val){
       this.tableData=val;
-      console.log("in watch store");
     }
   },
   methods:{
     createStateFilter(queryString){
-      return (state)=>{
-        return (state.value.toLowerCase().indexOf(queryString.toLowerCase())===0);
+      return (row)=>{
+        return (row[this.searchColName].toLowerCase().indexOf(queryString.toLowerCase())===0);
       };
     },
     inputChangeHandler(queryString){
+      if(this.editLock){
+        this.inputName=Object.assign("","");
+        this.triggerEditLock();
+        return;
+      }
       var tableData=this.store;
       this.tableData=queryString?tableData.filter(this.createStateFilter(queryString)):tableData;
     },
@@ -86,7 +93,6 @@ export default {
         return;
       }
       this.$emit('my-delete', row);
-      console.log("signal delete");
     },
     signalEdit(row){
       if(this.editLock){
@@ -95,7 +101,6 @@ export default {
       }
       this.editLock=true;
       this.$emit('my-edit',row);
-      console.log("signal edit");
     },
     signalAdd(){
       if(this.editLock){
@@ -104,7 +109,6 @@ export default {
       }
       this.editLock=true;
       this.$emit('my-add');
-      console.log("signal add");
     },
     signalAccept(row){
       this.editLock=false;
@@ -114,7 +118,7 @@ export default {
       this.editLock=false;
       this.$emit('cancel',row);
     },
-    triggerEditLock(){
+    triggerEditLock(){ //保证同时只对一条记录做增/改操作
       //handle modification conflict
       alert("请先完成当前条目的编辑");
     },

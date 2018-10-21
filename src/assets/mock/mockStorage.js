@@ -1,0 +1,21 @@
+export default [{
+  medicine:"阿司匹林",
+  count:43,
+  cost:12,
+  price:15
+},{
+  medicine:"头孢氨苄",
+  count:56,
+  cost:3,
+  price:4
+},{
+  medicine:"特非纳定",
+  count:37,
+  cost:6,
+  price:8
+},{
+  medicine:"土霉素",
+  count:88,
+  cost:2,
+  price:3
+},]

@@ -1,10 +1,12 @@
 <template>
   <div>
     <h1>this is a table for patients</h1>
-    <storage-table 
-    :name="queryString" 
+    <patient-table 
+    :queryString="queryString" 
     :store="tableData"
     :placeholder="placeholder"
+    searchColName="name"
+    editFlagName="editFlag"
     deletable
     editable
     @my-add="addHandler"
@@ -19,8 +21,8 @@
         sortable
       >
       <template slot-scope="scope">
-        <span :key="span1" v-show="!scope.row.editFlag">{{scope.row.name}}</span>
-        <span :key="span2" v-show="scope.row.editFlag"><el-input v-model="editPatient.name"></el-input></span>
+        <span v-show="!scope.row.editFlag">{{scope.row.name}}</span>
+        <span v-show="scope.row.editFlag"><el-input v-model="editPatient.name"></el-input></span>
       </template>
       </el-table-column>
       <el-table-column
@@ -40,22 +42,21 @@
         <span v-show="scope.row.editFlag"><el-input v-model="editPatient.risk"></el-input></span>
       </template>
       </el-table-column>
-    </storage-table>
+    </patient-table>
   </div>
 </template>
 
 <script>
-import storageTable from './MyTable';
+import patientTable from '../common/MyTable';
 import patients from '../../assets/mock/mockPatients';
 
 export default {
   data(){
     return{
+      addFlag:false,
       tableData:patients,
-      span1:1,
-      span2:2,
       queryString:null,
-      placeholder:"请输入药名",
+      placeholder:"请输入姓名",
       editPatient:{
         name:null,
         id:null,
@@ -64,50 +65,55 @@ export default {
     }
   },
   components: {
-    storageTable,
+    patientTable,
   },
   methods:{
     addHandler(){
-      console.log("in addHandler");
       //modify data locally
-      this.resetRow();
-      this.tableData.unshift({editFlag:true});
-      console.log(this.tableData);
+      this.addFlag=true;
+      this.resetEditPatient();
+      this.tableData.unshift({...this.editPatient,editFlag:true});
     },
     editHandler(row){
-      console.log("in editHandler");
       //modify data locally
+      console.log("in editHandler");
       row.editFlag=true;
-      this.editPatient=row;
       // this.tableData = Object.assign([],this.tableData);
       this.$set(this.tableData,this.tableData.indexOf(row),row);
+      this.editPatient=Object.assign({},row);
     },
     deleteHandler(row){
-      console.log("in deleteHandler");
       this.tableData.splice(this.tableData.indexOf(row),1);
       //send delete data request
     },
     acceptHandler(row){
-      console.log("in acceptHandler");
-      row.editFlag=false;
-      this.$set(this.tableData,this.tableData.indexOf(row),row);
+      if(this.addFlag){
+        this.addFlag=false;
+        if(!this.isNewRowValidated(this.editPatient)){
+          alert("姓名和就诊号不能为空");
+          return;
+        }
+      }
+      this.editPatient.editFlag=false;
+      this.$set(this.tableData,this.tableData.indexOf(row),this.editPatient);
       //send modify data request
     },
     cancelHandler(row){
-      console.log("in cancelHandler");
-      if(this.isNewRow(row)){
+      if(this.addFlag){
+        this.addFlag=false;
         this.tableData.shift();
-        return;
       }
       row.editFlag=false;
       this.$set(this.tableData,this.tableData.indexOf(row),row);      
       //abort modification
     },
-    isNewRow(row){
-      console.log(row.id===undefined);
-      return (row.id===undefined&&row.name===undefined&&row.risk===undefined)?true:false;
+    isNewRowValidated(row){
+      return (!this.isEmpty(row.id)&&!this.isEmpty(row.name));
     },
-    resetRow(){
+    isEmpty(string){
+      return (string===undefined||string===null||string==="")?true:false;
+    },
+    resetEditPatient(){
       this.editPatient={
         name:null,
         id:null,
@@ -117,7 +123,7 @@ export default {
   },
   mounted(){
     this.tableData.forEach((elem,index)=>{
-      elem.editFlag=false;
+      elem.editFlag=false;//设置每条记录的编辑标签名为editFlag
     });
     this.tableData = Object.assign([],this.tableData);
   }
