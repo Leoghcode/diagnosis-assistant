@@ -1,4 +1,4 @@
-import skin_1 from '../logo.png'
+import skin_1 from '../skin/skin_1.jpg'
 import skin_2 from '../skin/skin_2.jpg'
 import skin_3 from '../skin/skin_3.jpg'
 import skin_4 from '../skin/skin_4.jpg'

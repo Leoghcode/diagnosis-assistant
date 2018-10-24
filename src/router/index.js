@@ -3,11 +3,8 @@ import Router from 'vue-router'
 
 import page1 from '@/components/page1/page1'
 import nurse from '@/components/nurse/nurse'
-import columnChart from '@/components/page3/columnChart'
-import lineChart from '@/components/page3/lineChart'
-import pieChart from '@/components/page3/pieChart'
+import page2 from '@/components/page2/page2'
 import page3 from '@/components/page3/page3'
-
 Vue.use(Router)
 
 export default new Router({
@@ -23,19 +20,9 @@ export default new Router({
       component: nurse
     },
     {
-      path: '/columnChart',
-      name: 'columnChart',
-      component: columnChart
-    },
-    {
-      path: '/lineChart',
-      name: 'lineChart',
-      component: lineChart
-    },
-    {
-      path: '/pieChart',
-      name: 'pieChart',
-      component: pieChart
+      path: '/page2',
+      name: 'page2',
+      component: page2
     },
     {
       path: '/page3',

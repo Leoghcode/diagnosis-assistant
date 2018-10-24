@@ -8,7 +8,7 @@
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-300">
-          <search-patient :query="searchQueryString" :loading.sync="autoSearch1" @check-history="checkHistory($event)"></search-patient>
+          <patient-table :query="searchQueryString" :loading.sync="autoSearch1" @check-history="checkHistory($event)"></patient-table>
         </el-card>
       </el-col>
     </el-row>
@@ -29,7 +29,7 @@
 
 <script type="text/javascript">
   import illInstance from './illInstance'
-  import searchPatient from './searchPatient'
+  import patientTable from './patientTable'
   import diagnosisHistory from './diagnosisHistory'
   import diagnosisPicture from './diagnosisPicture'
 
@@ -37,7 +37,7 @@
     name: 'page1',
     components: {
       illInstance: illInstance,
-      searchPatient: searchPatient,
+      patientTable: patientTable,
       diagnosisHistory: diagnosisHistory,
       diagnosisPicture: diagnosisPicture
     },
