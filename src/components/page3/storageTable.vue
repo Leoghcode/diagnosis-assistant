@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h1>this is a table for storage</h1>
-    <storage-table 
-    :queryString="queryString" 
+    <h1>库存表</h1>
+    <storage-table
+    :queryString="queryString"
     :store="tableData"
     :placeholder="placeholder"
-    searchColName="name"
+    searchColName="medicine"
     editFlagName="editFlag"
     deletable
     editable
@@ -113,7 +113,7 @@ export default {
         this.tableData.shift();
       }
       row.editFlag=false;
-      this.$set(this.tableData,this.tableData.indexOf(row),row);      
+      this.$set(this.tableData,this.tableData.indexOf(row),row);
       //abort modification
     },
     isNewRow(row){

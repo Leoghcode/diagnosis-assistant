@@ -63,6 +63,7 @@ const presDetails = {
     {medicine: '药C', number: '1瓶',usage:'一天三次每次20ml'}
   ],
 };
+
 var presArray=[];
 for(let obj in presDetails){
   let o={};
@@ -74,10 +75,22 @@ var diseaseArray=[{
   disease:'病A',
   rank:1,
 },{
-  disease:'病A',
+  disease:'病B',
   rank:2,
 },{
-  disease:'病B',
+  disease:'病C',
   rank:3,
 },];
-export {presOptions,presDetails,presArray,diseaseArray};
+
+var presOptions2 ={};
+for(let d in presOptions) {
+  let o = [];
+  for(let m in presOptions[d]) {
+    let item = {};
+    item['name'] = presOptions[d][m];
+    o.push(item);
+  }
+  presOptions2[d] = o;
+};
+
+export {presOptions,presDetails,presArray,diseaseArray,presOptions2};

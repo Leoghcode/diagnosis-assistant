@@ -1,40 +1,44 @@
 <template>
   <div>
-    <h1>this is a table for diseases</h1>
-    <disease-table 
-    :queryString="queryString" 
-    :store="tableData"
-    :placeholder="placeholder"
-    searchColName="name"
-    editFlagName="editFlag"
-    deletable
-    editable
-    @my-add="addHandler"
-    @my-edit="editHandler"
-    @my-delete="deleteHandler"
-    @accept="acceptHandler"
-    @cancel="cancelHandler"
-    >
-      <el-table-column
-        prop="disease"
-        label="病名"
-        sortable
+    <el-row>
+      <h1>病种库</h1>
+      <disease-table
+      :queryString="queryString"
+      :store="tableData"
+      :placeholder="placeholder"
+      searchColName="name"
+      editFlagName="editFlag"
+      deletable
+      editable
+      viewable
+      @my-add="addHandler"
+      @my-edit="editHandler"
+      @my-delete="deleteHandler"
+      @accept="acceptHandler"
+      @cancel="cancelHandler"
+      @view="viewHandler"
       >
-      <template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.disease}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editDisease.disease"></el-input></span>
-      </template>
-      </el-table-column>
-      <el-table-column
-        prop="rank"
-        label="等级"
-        sortable
-      ><template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.rank}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editDisease.rank"></el-input></span>
-      </template>
-      </el-table-column>
-    </disease-table>
+        <el-table-column
+          prop="disease"
+          label="病名"
+          sortable
+        >
+        <template slot-scope="scope">
+          <span v-show="!scope.row.editFlag">{{scope.row.disease}}</span>
+          <span v-show="scope.row.editFlag"><el-input v-model="editDisease.disease"></el-input></span>
+        </template>
+        </el-table-column>
+        <el-table-column
+          prop="rank"
+          label="等级"
+          sortable
+        ><template slot-scope="scope">
+          <span v-show="!scope.row.editFlag">{{scope.row.rank}}</span>
+          <span v-show="scope.row.editFlag"><el-input v-model="editDisease.rank"></el-input></span>
+        </template>
+        </el-table-column>
+      </disease-table>
+    </el-row>
   </div>
 </template>
 
@@ -95,8 +99,11 @@ export default {
         this.tableData.shift();
       }
       row.editFlag=false;
-      this.$set(this.tableData,this.tableData.indexOf(row),row);      
+      this.$set(this.tableData,this.tableData.indexOf(row),row);
       //abort modification
+    },
+    viewHandler(row) {
+      this.$emit('view', row.disease);
     },
     isNewRowValidated(row){
       return (!this.isEmpty(row.disease));

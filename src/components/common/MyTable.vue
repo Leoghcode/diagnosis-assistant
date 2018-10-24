@@ -21,22 +21,25 @@
       style="width:100%"
       border
       highlight-current-row
+      max-height="250"
+      :size="tableSize"
       :default-sort="{prop: 'index',order: 'ascending'}"
     >
       <slot></slot>
-      <el-table-column label="操作" width="100">
-              <template slot-scope="scope" >
-                <!-- 耦合editFlag -->
-                <span v-show="!scope.row[editFlagName]">
-                  <el-button v-show="editable" @click="signalEdit(scope.row)" type="text">修改 </el-button>
-                  <el-button v-show="deletable" @click="signalDelete(scope.row)" type="text">删除 </el-button>
-                </span>
-                <span v-show="scope.row[editFlagName]">
-                  <el-button v-show="editable" @click="signalAccept(scope.row)" type="text">确认 </el-button>
-                  <el-button v-show="editable" @click="signalCancel(scope.row)" type="text">取消 </el-button>
-                </span>
-              </template>
-          </el-table-column>
+      <el-table-column label="操作" width="150">
+        <template slot-scope="scope" >
+          <!-- 耦合editFlag -->
+          <span v-show="!scope.row[editFlagName]">
+            <el-button v-show="viewable" @click="signalView(scope.row)" type="text">查看 </el-button>
+            <el-button v-show="editable" @click="signalEdit(scope.row)" type="text">修改 </el-button>
+            <el-button v-show="deletable" @click="signalDelete(scope.row)" type="text">删除 </el-button>
+          </span>
+          <span v-show="scope.row[editFlagName]">
+            <el-button v-show="editable" @click="signalAccept(scope.row)" type="text">确认 </el-button>
+            <el-button v-show="editable" @click="signalCancel(scope.row)" type="text">取消 </el-button>
+          </span>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -62,6 +65,14 @@ export default {
     'editable':Boolean,
     'searchColName':String,
     'editFlagName':String,
+    'tableSize': {
+      type: String,
+      default: 'mini'
+    },
+    'viewable': {
+      type: Boolean,
+      default: false
+    }
   },
   watch: {
     queryString: function(val) {
@@ -122,6 +133,9 @@ export default {
       //handle modification conflict
       alert("请先完成当前条目的编辑");
     },
+    signalView(row) {
+      this.$emit('view', row);
+    }
   },
   mounted(){
     this.tableData=this.store;

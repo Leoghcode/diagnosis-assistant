@@ -1,48 +1,54 @@
 <template>
-  <div>
-    <h1>this is a table for patients</h1>
-    <patient-table 
-    :queryString="queryString" 
-    :store="tableData"
-    :placeholder="placeholder"
-    searchColName="name"
-    editFlagName="editFlag"
-    deletable
-    editable
-    @my-add="addHandler"
-    @my-edit="editHandler"
-    @my-delete="deleteHandler"
-    @accept="acceptHandler"
-    @cancel="cancelHandler"
-    >
-      <el-table-column
-        prop="name"
-        label="姓名"
-        sortable
-      >
-      <template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.name}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editPatient.name"></el-input></span>
-      </template>
-      </el-table-column>
-      <el-table-column
-        prop="id"
-        label="就诊号"
-        sortable
-      ><template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.id}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editPatient.id"></el-input></span>
-      </template>
-      </el-table-column>
-      <el-table-column
-        prop="risk"
-        label="风险等级"
-      ><template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.risk}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editPatient.risk"></el-input></span>
-      </template>
-      </el-table-column>
-    </patient-table>
+  <div id="table">
+    <el-row v-loading="loading">
+      <div>
+        <!-- <h1>this is a table for patients</h1> -->
+        <patient-table
+        :queryString="queryString"
+        :store="tableData"
+        :placeholder="placeholder"
+        searchColName="name"
+        editFlagName="editFlag"
+        tableSize="mini"
+        deletable
+        editable
+        @my-add="addHandler"
+        @my-edit="editHandler"
+        @my-delete="deleteHandler"
+        @accept="acceptHandler"
+        @cancel="cancelHandler"
+        @row-click="searchHistory"
+        >
+          <el-table-column
+            prop="name"
+            label="姓名"
+            sortable
+          >
+          <template slot-scope="scope">
+            <span v-show="!scope.row.editFlag">{{scope.row.name}}</span>
+            <span v-show="scope.row.editFlag"><el-input v-model="editPatient.name"></el-input></span>
+          </template>
+          </el-table-column>
+          <el-table-column
+            prop="id"
+            label="就诊号"
+            sortable
+          ><template slot-scope="scope">
+            <span v-show="!scope.row.editFlag">{{scope.row.id}}</span>
+            <span v-show="scope.row.editFlag"><el-input v-model="editPatient.id"></el-input></span>
+          </template>
+          </el-table-column>
+          <el-table-column
+            prop="risk"
+            label="风险等级"
+          ><template slot-scope="scope">
+            <span v-show="!scope.row.editFlag">{{scope.row.risk}}</span>
+            <span v-show="scope.row.editFlag"><el-input v-model="editPatient.risk"></el-input></span>
+          </template>
+          </el-table-column>
+        </patient-table>
+      </div>
+    </el-row>
   </div>
 </template>
 
@@ -67,6 +73,19 @@ export default {
   components: {
     patientTable,
   },
+  props: [
+    'query', 'loading'
+  ],
+  watch: {
+    query: function(val) {
+      // emulate the data call from backend
+      var self = this;
+      window.setTimeout(function(){
+        self.$emit('update:loading', false);
+        self.queryString = val;
+      }, 800);
+    }
+  },
   methods:{
     addHandler(){
       //modify data locally
@@ -76,7 +95,7 @@ export default {
     },
     editHandler(row){
       //modify data locally
-      console.log("in editHandler");
+      // console.log("in editHandler");
       row.editFlag=true;
       // this.tableData = Object.assign([],this.tableData);
       this.$set(this.tableData,this.tableData.indexOf(row),row);
@@ -104,7 +123,7 @@ export default {
         this.tableData.shift();
       }
       row.editFlag=false;
-      this.$set(this.tableData,this.tableData.indexOf(row),row);      
+      this.$set(this.tableData,this.tableData.indexOf(row),row);
       //abort modification
     },
     isNewRowValidated(row){
@@ -119,6 +138,9 @@ export default {
         id:null,
         risk:null,
       }
+    },
+    searchHistory(row) {
+      this.$emit('check-history', row.name);
     }
   },
   mounted(){
