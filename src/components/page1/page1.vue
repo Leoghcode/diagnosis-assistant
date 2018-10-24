@@ -89,7 +89,6 @@
 <style scoped>
   #page1 {
     padding: 10px 20px;
-    background-color: #009688a6;
   }
 
   .row1 {
