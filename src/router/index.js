@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import login from '@/components/login/login'
 import page1 from '@/components/page1/page1'
 import nurse from '@/components/nurse/nurse'
 import page2 from '@/components/page2/page2'
@@ -9,6 +10,11 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: login
+    },
     {
       path: '/page1',
       name: 'page1',
