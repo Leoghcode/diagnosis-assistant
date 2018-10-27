@@ -88,14 +88,24 @@
         this.illFormOpen = true;
       },
       search(val){
+        var self = this; 
         // 首先清空
         this.filterHistories = [];
-
-        for(var i = 0; i < mockHistory.length; i++){
-          if(mockHistory[i].name == val){
-            this.filterHistories.push(mockHistory[i]);
+        this.$axios({
+          method: "get",
+          url:"/api/case-history/list",
+          params:{
+            patientId: "1"
           }
-        }
+        })
+        .then(function (response) {
+          console.log(response['data']['caseHistoryList'][0]['id']);
+          self.filterHistories = response['data']['caseHistoryList'];
+          return (response['data']['caseHistoryList'][0]['id']);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       },
       checkDetail(val){
         this.$emit('check-detail', val);
