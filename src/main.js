@@ -12,7 +12,7 @@ import axios from 'axios'
 Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false
 Vue.use(ElementUI)
-Vue.prototype.$http = axios
+Vue.prototype.$axios = axios
 
 /* eslint-disable no-new */
 new Vue({
