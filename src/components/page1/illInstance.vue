@@ -74,7 +74,7 @@ export default {
       console.log(row);
       console.log(row.address);
       this.showDetail = true;
-      this.$emit('choose', row.name);
+      this.$emit('choose', 1);
     },
     goBackList() {
       this.showDetail = false;

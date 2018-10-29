@@ -26,12 +26,12 @@
       </template>
       </el-table-column>
       <el-table-column
-        prop="count"
+        prop="stock"
         label="数量"
         sortable
       ><template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.count}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editMedicine.count"></el-input></span>
+        <span v-show="!scope.row.editFlag">{{scope.row.stock}}</span>
+        <span v-show="scope.row.editFlag"><el-input v-model="editMedicine.stock"></el-input></span>
       </template>
       </el-table-column>
       <el-table-column
@@ -43,11 +43,11 @@
       </template>
       </el-table-column>
       <el-table-column
-        prop="price"
-        label="售价"
+        prop="unitPrice"
+        label="单价"
       ><template slot-scope="scope">
-        <span v-show="!scope.row.editFlag">{{scope.row.price}}</span>
-        <span v-show="scope.row.editFlag"><el-input v-model="editMedicine.price"></el-input></span>
+        <span v-show="!scope.row.editFlag">{{scope.row.unitPrice}}</span>
+        <span v-show="scope.row.editFlag"><el-input v-model="editMedicine.unitPrice"></el-input></span>
       </template>
       </el-table-column>
     </storage-table>
@@ -62,19 +62,22 @@ export default {
   data(){
     return{
       addFlag:false,
-      tableData:storage,
+      tableData:[],
       queryString:null,
       placeholder:"请输入药名",
       editMedicine:{
         medicine:null,
-        count:null,
+        stock:null,
         cost:null,
-        price:null,
+        unitPrice:null,
       }
     }
   },
   components: {
     storageTable,
+  },
+  created: function() {
+    this.getStocks();
   },
   methods:{
     addHandler(){
@@ -102,6 +105,18 @@ export default {
           alert("药名不能为空");
           return;
         }
+        var self = this;
+        self.$axios({
+          method: 'post',
+          url: '/api/stock/add',
+          data: self.editMedicine
+        }).then(function(res) {
+          console.log(res.data);
+        }).catch(function(res) {
+
+        });
+      } else {
+
       }
       this.editMedicine.editFlag=false;
       this.$set(this.tableData,this.tableData.indexOf(row),this.editMedicine);
@@ -128,10 +143,21 @@ export default {
     reseteditMedicine(){
       this.editMedicine={
         medicine:null,
-        count:null,
+        stock:null,
         cost:null,
-        price:null,
+        unitPrice:null,
       }
+    },
+    getStocks() {
+      var self = this;
+      self.$axios({
+        method: 'get',
+        url: '/api/stock/list'
+      }).then(function(res) {
+        self.tableData = res.data.stockList;
+      }).catch(function(res) {
+
+      });
     }
   },
   mounted(){

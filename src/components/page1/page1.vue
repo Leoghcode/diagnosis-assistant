@@ -3,24 +3,24 @@
     <el-row class="row1" :gutter="15">
       <el-col :sm="24" :md="12">
         <el-card class="box-card-300">
-          <ill-instance @choose="handleInstanceChoose($event)"></ill-instance>
+          <patient-table :patient-id="patientId" :loading.sync="autoSearch1" @show-history="showHistory($event)"></patient-table>
         </el-card>
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-300">
-          <patient-table :query="searchQueryString" :loading.sync="autoSearch1" @check-history="checkHistory($event)"></patient-table>
+          <ill-instance @choose="handleInstanceChoose($event)"></ill-instance>
         </el-card>
       </el-col>
     </el-row>
     <el-row :gutter="15">
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-history :query="historyQueryString" @check-detail="checkDetail($event)" :loading.sync="autoSearch2"></diagnosis-history>
+          <diagnosis-history :case-history="caseHistory" @check-detail="checkDetail($event)" :loading.sync="autoSearch2"></diagnosis-history>
         </el-card>
       </el-col>
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-picture :img-list="historyDetail.imgList" :details="historyDetail.presDetail"></diagnosis-picture>
+          <diagnosis-picture :case-id="historyDetailId"></diagnosis-picture>
         </el-card>
       </el-col>
     </el-row>
@@ -43,44 +43,40 @@
     },
     data() {
       return {
-        searchQueryString: '',
-        historyQueryString: '',
-        historyDetail: {
-          imgList: [],
-          presDetail: ''
-        },
+        patientId: '',
+        caseHistory: [],
+        historyDetailId: '',
         autoSearch1: false,
         autoSearch2: false,
       }
     },
     watch: {
-      searchQueryString: function(val) {
+      patientId: function(val) {
         if(val != '') {
           this.autoSearch1 = true;
         }
       },
-      historyQueryString: function(val) {
-        this.emptyDetail();
-        if(val != '') {
-          this.autoSearch2 = true;
+      caseHistory: {
+        handler: function(val) {
+          this.emptyDetail();
+          if(val.length != 0) {
+            this.autoSearch2 = true;
+          }
         }
       }
     },
     methods: {
       handleInstanceChoose(patientId) {
-        this.searchQueryString = patientId;
-        this.historyQueryString = patientId;
+        this.patientId = patientId;
       },
-      checkDetail(patientHistory) {
-        this.historyDetail.imgList = patientHistory.images;
-        this.historyDetail.presDetail = patientHistory.prescriptionDetail;
+      checkDetail(historyId) {
+        this.historyDetailId = historyId;
       },
-      checkHistory(historyQueryString) {
-        this.historyQueryString = historyQueryString;
+      showHistory(caseHistory) {
+        this.caseHistory = caseHistory;
       },
       emptyDetail() {
-        this.historyDetail.imgList = [];
-        this.historyDetail.presDetail = '';
+        this.historyDetailId = '';
       }
     }
   }

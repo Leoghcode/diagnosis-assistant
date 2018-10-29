@@ -2,25 +2,25 @@
   公共组件，用于展示多张图片,图片可以放大显示。
   编辑功能待添加。
   需要的参数： imgList.
-  imgList的形式是 [{name: '', image: obj}]
+  imgList的形式是 [{id: '', imageUrl: obj}]
   obj是image图片。
  -->
 <template>
 <div>
   <span class="notice">{{ notice }}</span>
-  <el-carousel v-show="emptyImgList" :autoplay="false" height="" @change="carouselChange">
-    <el-carousel-item v-for="image in images" :key="image.name">
-      <img :width="imgWidth" :height="imgHeight" :src="image.image" @click="openDialog()">
+  <el-carousel ref="carouselSm" v-show="emptyImgList" :autoplay="false" height="" @change="carouselChange">
+    <el-carousel-item v-for="image in images" :key="image.id">
+      <img :width="imgWidth" :height="imgHeight" :src="image.imageUrl" @click="openDialog()">
     </el-carousel-item>
   </el-carousel>
   <div>
     <el-row>
       <el-dialog top="0" custom-class="img-dialog" :fullscreen="true" :modal="true" :visible.sync="imageMode">
         <!-- <img width="50%" :src="dialogImg"> -->
-        <span class="notice">{{ notice }}</span>
-        <el-carousel :initial-index="curImg" :autoplay="false" height="600px">
-          <el-carousel-item v-for="image in images" :key="image.name">
-            <img width="50%" :src="image.image">
+        <span class="notice">{{ notice }} {{curImg}}</span>
+        <el-carousel ref="carouselBg" :initial-index="curImg" :autoplay="false" height="600px" @change="carouselChange2">
+          <el-carousel-item v-for="image in images" :key="image.id">
+            <img width="50%" :src="image.imageUrl">
           </el-carousel-item>
         </el-carousel>
       </el-dialog>
@@ -71,6 +71,14 @@ export default {
     },
     carouselChange(itemIndex) {
       this.curImg = itemIndex;
+      if(this.$refs.carouselBg) {
+        this.$refs.carouselBg.setActiveItem(this.curImg);
+      }
+      this.$emit('imgchange', itemIndex);
+    },
+    carouselChange2(itemIndex) {
+      this.curImg = itemIndex;
+      this.$refs.carouselSm.setActiveItem(this.curImg);
       this.$emit('imgchange', itemIndex);
     }
   }

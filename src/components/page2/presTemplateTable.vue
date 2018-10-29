@@ -64,7 +64,7 @@ export default {
         var self = this;
         window.setTimeout(function(){
           self.$emit('update:loading', false);
-          self.tableData = presOptions2[val];
+          self.getPresTemplate();
         }, 800);
       }
       this.$emit('pres-reset');
@@ -124,6 +124,20 @@ export default {
         name:null,
         medicines:null,
       }
+    },
+    getPresTemplate() {
+      var self = this;
+      self.$axios({
+        method: 'get',
+        url: '/api/disease/getTemplate',
+        params: {
+          diseaseId: self.disease
+        }
+      }).then(function(res) {
+        self.tableData = res.data.diseaseTemplateList;
+      }).catch(function(res) {
+
+      });
     }
   },
   mounted(){

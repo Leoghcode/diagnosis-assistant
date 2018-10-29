@@ -9,7 +9,19 @@
       <el-tab-pane label="病例处方" name="second">
         <el-row>
           <div class="prescription">
-            {{details}}
+            <el-table :data="presList" stripe border max-height="250"
+              highlight-current-row>
+              <el-table-column prop="medicine" label="药名">
+              </el-table-column>
+              <el-table-column prop="totalDose" label="剂量">
+              </el-table-column>
+              <el-table-column prop="totalPrice" label="费用">
+              </el-table-column>
+              <el-table-column prop="instruction" label="说明">
+              </el-table-column>
+              <el-table-column prop="note" label="备注">
+              </el-table-column>
+            </el-table>
           </div>
         </el-row>
       </el-tab-pane>
@@ -27,11 +39,23 @@
 
   export default {
     props: [
-      'imgList', 'details'
+      'caseId'
     ],
+    watch: {
+      caseId: function(val) {
+        if(val == '') {
+          this.imgList = [];
+          this.presList = [];
+        } else {
+          this.getCaseDetail();
+        }
+      }
+    },
     data() {
       return {
-        activeName: 'first'
+        activeName: 'first',
+        imgList: [],
+        presList: []
       };
     },
     components: {
@@ -40,6 +64,21 @@
     methods: {
       handleClick(tab, event) {
         // console.log(tab, event);
+      },
+      getCaseDetail() {
+        var self = this;
+        self.$axios({
+          method: 'get',
+          url: '/api/case-history/query',
+          params: {
+            caseHistoryId: self.caseId
+          }
+        }).then(function(resp) {
+          self.imgList = resp.data.prescriptionList;
+          self.presList = resp.data.medicineRecordList;
+        }).catch(function(resp) {
+
+        });
       }
     }
   }

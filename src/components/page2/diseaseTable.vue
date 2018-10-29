@@ -29,12 +29,12 @@
         </template>
         </el-table-column>
         <el-table-column
-          prop="rank"
+          prop="level"
           label="等级"
           sortable
         ><template slot-scope="scope">
-          <span v-show="!scope.row.editFlag">{{scope.row.rank}}</span>
-          <span v-show="scope.row.editFlag"><el-input v-model="editDisease.rank"></el-input></span>
+          <span v-show="!scope.row.editFlag">{{scope.row.level}}</span>
+          <span v-show="scope.row.editFlag"><el-input v-model="editDisease.level"></el-input></span>
         </template>
         </el-table-column>
       </disease-table>
@@ -44,23 +44,34 @@
 
 <script>
 import diseaseTable from '../common/MyTable';
-import {diseaseArray} from '../../assets/mock/mockPresTemplates';
+// import {diseaseArray} from '../../assets/mock/mockPresTemplates';
 
 export default {
   data(){
     return{
       addFlag:false,
-      tableData:diseaseArray,
+      tableData: [],
       queryString:null,
       placeholder:"请输入病名",
       editDisease:{
         disease:null,
-        rank:null,
+        level:null,
       }
     }
   },
   components: {
     diseaseTable,
+  },
+  created: function() {
+    var self = this;
+    self.$axios({
+      method: 'get',
+      url: '/api/disease/list'
+    }).then(function(res) {
+      self.tableData = res.data.diseaseList;
+    }).catch(function(res) {
+
+    });
   },
   methods:{
     addHandler(){
@@ -103,7 +114,7 @@ export default {
       //abort modification
     },
     viewHandler(row) {
-      this.$emit('view', row.disease);
+      this.$emit('view', row.id);
     },
     isNewRowValidated(row){
       return (!this.isEmpty(row.disease));
@@ -114,7 +125,7 @@ export default {
     reseteditDisease(){
       this.editDisease={
         disease:null,
-        rank:null,
+        level:null,
       }
     }
   },

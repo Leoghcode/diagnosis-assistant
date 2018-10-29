@@ -12,13 +12,30 @@
         tableSize="mini"
         deletable
         editable
+        viewable
         @my-add="addHandler"
         @my-edit="editHandler"
         @my-delete="deleteHandler"
         @accept="acceptHandler"
         @cancel="cancelHandler"
-        @row-click="searchHistory"
+        @viewable="searchHistory"
         >
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="patient-info">
+                <el-form-item label="性别">
+                  <span>{{ props.row.gender ? '男' : '女' }}</span>
+                </el-form-item>
+                <el-form-item label="年龄">
+                  <span>{{ props.row.age }}</span>
+                </el-form-item>
+                <el-form-item label="手机号">
+                  <span>{{ props.row.phone }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+
           <el-table-column
             prop="name"
             label="姓名"
@@ -39,11 +56,11 @@
           </template>
           </el-table-column>
           <el-table-column
-            prop="risk"
+            prop="riskDegree"
             label="风险等级"
           ><template slot-scope="scope">
-            <span v-show="!scope.row.editFlag">{{scope.row.risk}}</span>
-            <span v-show="scope.row.editFlag"><el-input v-model="editPatient.risk"></el-input></span>
+            <span v-show="!scope.row.editFlag">{{scope.row.riskDegree}}</span>
+            <span v-show="scope.row.editFlag"><el-input v-model="editPatient.riskDegree"></el-input></span>
           </template>
           </el-table-column>
         </patient-table>
@@ -54,19 +71,19 @@
 
 <script>
 import patientTable from '../common/MyTable';
-import patients from '../../assets/mock/mockPatients';
+// import patients from '../../assets/mock/mockPatients';
 
 export default {
   data(){
     return{
       addFlag:false,
-      tableData:patients,
+      tableData: [],
       queryString:null,
       placeholder:"请输入姓名",
       editPatient:{
         name:null,
         id:null,
-        risk:null,
+        riskDegree:null,
       }
     }
   },
@@ -74,16 +91,20 @@ export default {
     patientTable,
   },
   props: [
-    'query', 'loading'
+    'patientId', 'loading'
   ],
   watch: {
-    query: function(val) {
+    patientId: function(val) {
       // emulate the data call from backend
-      var self = this;
-      window.setTimeout(function(){
-        self.$emit('update:loading', false);
-        self.queryString = val;
-      }, 800);
+      if(val != '') {
+        var self = this;
+        window.setTimeout(function(){
+          self.getPatientInfo();
+        }, 800);
+      } else {
+        this.tableData = [];
+        this.$emit('show-history', []);
+      }
     }
   },
   methods:{
@@ -141,6 +162,23 @@ export default {
     },
     searchHistory(row) {
       this.$emit('check-history', row.name);
+    },
+    getPatientInfo() {
+      var self = this;
+      var url = '/api/patient/home/1';
+      self.$axios({
+        method: 'get',
+        url: url
+      }).then(function(res) {
+        self.$emit('update:loading', false);
+        var patientInfo = res.data.patient;
+        if(patientInfo) {
+          self.tableData = [patientInfo];
+          self.$emit('show-history', res.data.caseHistoryList);
+        }
+      }).catch(function(res) {
+
+      });
     }
   },
   mounted(){
@@ -151,3 +189,18 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .patient-info {
+    font-size: 0;
+  }
+  .patient-info label {
+    width: 90px;
+    color: lightgray;
+  }
+  .patient-info .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 40%;
+  }
+</style>

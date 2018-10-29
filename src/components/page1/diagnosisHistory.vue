@@ -10,31 +10,22 @@
         :data="filterHistories"
         style="width: 100%"
         height="250"
+        size="mini"
         :default-sort = "{prop: 'date', order: 'descending'}">
         <el-table-column
-          prop="date"
+          prop="dateTime"
           label="日期"
           sortable
           >
         </el-table-column>
         <el-table-column
-          prop="name"
-          label="姓名"
-          >
-        </el-table-column>
-        <el-table-column
-          prop="hospital"
-          label="就诊地点"
-          >
-        </el-table-column>
-        <el-table-column
-          prop="diagnose_res"
+          prop="description"
           label="诊断结果"
           >
         </el-table-column>
         <el-table-column
-          prop="prescription"
-          label="处方"
+          prop="fee"
+          label="费用"
           >
         </el-table-column>
         <el-table-column
@@ -70,17 +61,19 @@
       }
     },
     props: [
-      'query', 'loading'
+      'caseHistory','loading'
     ],
     watch: {
-      query:function(val){
-        // emulate the data call from backend
-        var self = this;
-        window.setTimeout(function(){
-          self.$emit('update:loading', false);
-          // prop 'query' is a string used for search
-          self.search(val);
-        }, 800);
+      caseHistory: {
+        handler: function(val){
+          // emulate the data call from backend
+          var self = this;
+          window.setTimeout(function(){
+            self.$emit('update:loading', false);
+            // prop 'query' is a string used for search
+            self.search(val);
+          }, 800);
+        }
       }
     },
     methods: {
@@ -89,16 +82,11 @@
       },
       search(val){
         // 首先清空
-        this.filterHistories = [];
+        this.filterHistories = this.caseHistory;
 
-        for(var i = 0; i < mockHistory.length; i++){
-          if(mockHistory[i].name == val){
-            this.filterHistories.push(mockHistory[i]);
-          }
-        }
       },
       checkDetail(val){
-        this.$emit('check-detail', val);
+        this.$emit('check-detail', val.id);
       }
     }
   }
