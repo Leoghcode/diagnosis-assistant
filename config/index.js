@@ -3,7 +3,9 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
-
+const url = 'http://localhost:5310';
+// const url = 'http://192.168.1.122:5310';
+// const url = 'http://10.60.38.181:5310';
 module.exports = {
   dev: {
 
@@ -12,9 +14,15 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/api': {
-            target: 'http://10.60.38.181:5310',
+            target: url,
             pathRewrite: {
                 '^/api': ''
+            }
+        },
+        '/getimages': {
+            target: url,
+            pathRewrite: {
+                '^/getimages': ''
             }
         }
     },

@@ -1,12 +1,29 @@
 <template>
   <div id="app">
+    <my-header :cur-index="curIndex" @rchange="changeRoute"></my-header>
     <router-view/>
   </div>
 </template>
 
 <script>
+import myHeader from './components/common/header';
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    myHeader: myHeader
+  },
+  methods: {
+    changeRoute(pageIndex) {
+      var pageName = 'page' + pageIndex;
+      this.$router.push({name: pageName});
+    }
+  },
+  computed: {
+    curIndex: function() {
+      return this.$route.name[this.$route.name.length - 1];
+    }
+  }
 }
 </script>
 

@@ -165,7 +165,7 @@ export default {
     },
     getPatientInfo() {
       var self = this;
-      var url = '/api/patient/home/1';
+      var url = '/api/patient/home/' + self.patientId;
       self.$axios({
         method: 'get',
         url: url

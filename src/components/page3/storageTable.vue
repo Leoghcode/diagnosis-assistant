@@ -88,7 +88,6 @@ export default {
     },
     editHandler(row){
       //modify data locally
-      console.log("in editHandler");
       row.editFlag=true;
       // this.tableData = Object.assign([],this.tableData);
       this.$set(this.tableData,this.tableData.indexOf(row),row);
@@ -96,31 +95,26 @@ export default {
     },
     deleteHandler(row){
       this.tableData.splice(this.tableData.indexOf(row),1);
-      //send delete data request
+      this.deleteStock(row.id);
     },
     acceptHandler(row){
+      var isAdd = false;
       if(this.addFlag){
         this.addFlag=false;
+        isAdd = true;
         if(!this.isNewRowValidated(this.editMedicine)){
           alert("药名不能为空");
           return;
         }
-        var self = this;
-        self.$axios({
-          method: 'post',
-          url: '/api/stock/add',
-          data: self.editMedicine
-        }).then(function(res) {
-          console.log(res.data);
-        }).catch(function(res) {
-
-        });
-      } else {
-
       }
       this.editMedicine.editFlag=false;
       this.$set(this.tableData,this.tableData.indexOf(row),this.editMedicine);
       //send modify data request
+      if(isAdd) {
+        this.addNewStock(this.tableData[0]);
+      } else {
+        this.editStock();
+      }
     },
     cancelHandler(row){
       if(this.addFlag){
@@ -155,6 +149,58 @@ export default {
         url: '/api/stock/list'
       }).then(function(res) {
         self.tableData = res.data.stockList;
+      }).catch(function(res) {
+
+      });
+    },
+    addNewStock(row) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/stock/add',
+        data: {
+          medicine: row.medicine,
+          stock: row.stock,
+          unitPrice: row.unitPrice,
+          cost: row.cost,
+          threshold: 0
+        }
+      }).then(function(res) {
+        console.log(res.data);
+        row.id = res.data.id;
+      }).catch(function(res) {
+
+      });
+    },
+    editStock() {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/stock/edit',
+        data: {
+          id: self.editMedicine.id,
+          medicine: self.editMedicine.medicine,
+          stock: self.editMedicine.stock,
+          unitPrice: self.editMedicine.unitPrice,
+          cost: self.editMedicine.cost,
+          threshold: 0
+        }
+      }).then(function(res) {
+        console.log(res.data);
+      }).catch(function(res) {
+
+      });
+    },
+    deleteStock(id) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/stock/delete',
+        data: {
+          id: id
+        }
+      }).then(function(res) {
+        console.log(res.data);
       }).catch(function(res) {
 
       });

@@ -15,7 +15,7 @@
     <el-row :gutter="15">
       <el-col :sm="24" :md="12">
         <el-card class="box-card-400">
-          <diagnosis-history :case-history="caseHistory" @check-detail="checkDetail($event)" :loading.sync="autoSearch2"></diagnosis-history>
+          <diagnosis-history :patient-id="patientId" :pre-case-data="preCaseData" :case-history="caseHistory" @check-detail="checkDetail($event)" :loading.sync="autoSearch2"></diagnosis-history>
         </el-card>
       </el-col>
       <el-col :sm="24" :md="12">
@@ -44,6 +44,7 @@
     data() {
       return {
         patientId: '',
+        preCaseData: {preCaseId: '', preCaseImages: []},
         caseHistory: [],
         historyDetailId: '',
         autoSearch1: false,
@@ -66,8 +67,9 @@
       }
     },
     methods: {
-      handleInstanceChoose(patientId) {
-        this.patientId = patientId;
+      handleInstanceChoose(patient) {
+        this.patientId = patient.patientId;
+        this.preCaseData = patient.preCaseData;
       },
       checkDetail(historyId) {
         this.historyDetailId = historyId;

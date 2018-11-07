@@ -4,11 +4,11 @@
         <h2>实例登记表</h2>
         <el-table :data="instances" stripe border height="200"
           size="mini" highlight-current-row>
-          <el-table-column sortable prop="date" label="日期" width="100">
+          <el-table-column sortable prop="preCaseId" label="id" width="100">
           </el-table-column>
           <el-table-column prop="name" label="姓名" width="100">
           </el-table-column>
-          <el-table-column prop="address" label="地址">
+          <el-table-column prop="phone" label="手机号">
           </el-table-column>
           <el-table-column label="操作" width="100">
             <template slot-scope="scope">
@@ -39,7 +39,7 @@
                 </div>
                 <div class="margin-top-m20">
                   <p><strong>当前照片:</strong> {{curImg.name}}</p>
-                  <p><strong>预测结果为：</strong> {{curImg.result}}</p>
+                  <p><strong>预测结果为：</strong> {{curImg.predictResult}}</p>
                   <p><strong>严重程度：</strong> {{curImg.level}}</p>
                   <p><strong>建议：</strong> {{curImg.advice}}</p>
                 </div>
@@ -53,35 +53,77 @@
 
 <script>
 import ImageViewer from '../common/ImageViewer';
-import images from '../../assets/mock/FakeImageData';
-import instances from '../../assets/mock/mockInstances';
+// import images from '../../assets/mock/FakeImageData';
+// import instances from '../../assets/mock/mockInstances';
 
 export default {
   name: 'illInstance',
   data(){
     return {
-      instances: instances,
+      userId: 1,
+      instances: [],
       showDetail: false,
-      images: images,
+      images: [],
       curImg: {},
     }
   },
   components: {
     ImageViewer: ImageViewer
   },
+  created: function() {
+    this.getPreCase();
+  },
   methods: {
     handleClick(row) {
       console.log(row);
-      console.log(row.address);
+      this.images = row.images;
       this.showDetail = true;
-      this.$emit('choose', 1);
+      var patient = {
+        patientId: row.patientId,
+        preCaseData: {
+          preCaseId: row.preCaseId,
+          preCaseImages: row.images
+        }
+      };
+      this.$emit('choose', patient);
     },
     goBackList() {
       this.showDetail = false;
-      this.$emit('choose', '');
+      var emptyPatient = {patientId: '', preCaseData: {preCaseId: '', preCaseImages: []}};
+      this.$emit('choose', emptyPatient);
     },
     carouselChange(imgIndex) {
       this.curImg = this.images[imgIndex];
+    },
+    getPreCase() {
+      var self = this;
+      self.$axios({
+        method: 'get',
+        url: '/api/case-history/getPreCase',
+        params: {
+          userId: self.userId
+        }
+      }).then(function(res) {
+        // console.log(res.data);
+
+        for(var i = 0; i < res.data.length; i++) {
+          var item = res.data[i];
+          var preCase = {preCaseId: '', patientId: '', name: '', phone: '', images: []};
+          preCase.preCaseId = item.id;
+          preCase.patientId = item.patient.id;
+          preCase.name = item.patient.name;
+          preCase.phone = item.patient.phone;
+          preCase.images = item.symptomFigureList;
+          for(var j = 0; j < preCase.images.length; j++) {
+            var url = preCase.images[j]['imageUrl'];
+            url = '/getimages/getPhoto?type=predictCase&photoId=' + url;
+            preCase.images[j]['imageUrl'] = url;
+          }
+          self.instances.push(preCase);
+        }
+      }).catch(function(res) {
+
+      });
     }
   }
 }

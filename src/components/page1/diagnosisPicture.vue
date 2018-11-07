@@ -74,7 +74,12 @@
             caseHistoryId: self.caseId
           }
         }).then(function(resp) {
-          self.imgList = resp.data.prescriptionList;
+          self.imgList = resp.data.symptomList;
+          for(var i = 0; i < self.imgList.length; i++) {
+            var url = self.imgList[i]['imageUrl'];
+            url = '/getimages/getPhoto?type=symptom&photoId=' + url;
+            self.imgList[i]['imageUrl'] = url;
+          }
           self.presList = resp.data.medicineRecordList;
         }).catch(function(resp) {
 

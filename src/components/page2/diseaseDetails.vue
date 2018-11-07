@@ -3,10 +3,20 @@
     <el-tabs v-loading="loading" v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="图片库" name="image-tab">
         <el-row :gutter="20">
-          <el-col :sm="24" :md="15">
+          <el-col :span="24">
+            <div class="text-left">
+              <el-upload
+                action="/api/disease/uploadPhotos"
+                name="photos"
+              >
+                <el-button size="small" type="primary">添加图片</el-button>
+              </el-upload>
+            </div>
+          </el-col>
+          <el-col :sm="24" :md="{span: 15, offset: 9}">
             <image-viewer :img-list="images" @imgchange="updateNote"></image-viewer>
           </el-col>
-          <el-col :sm="24" :md="9">
+          <!-- <el-col :sm="24" :md="9">
             <el-card v-show="disease!=''">
               <div slot="header">
                 <span>图片备注</span>
@@ -18,7 +28,7 @@
                 <p><strong>备注：</strong> {{ curImgNote['advice'] }}</p>
               </div>
             </el-card>
-          </el-col>
+          </el-col> -->
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="病情资料" name="ill-tab">
@@ -58,8 +68,7 @@
           var self = this;
           window.setTimeout(function(){
             self.$emit('update:loading', false);
-            self.images = diseaseDetails[val]['images'];
-            self.descriptions = diseaseDetails[val]['descriptions'];
+            self.getDiseaseDetail();
           }, 800);
         }
       }
@@ -70,6 +79,13 @@
       },
       updateNote(index) {
         this.curImg = index;
+      },
+      getDiseaseDetail() {
+        var self = this;
+        self.$axios({
+          method: 'get',
+          url: '/api/'
+        })
       }
     },
     computed: {

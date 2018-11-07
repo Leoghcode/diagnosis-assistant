@@ -37,6 +37,15 @@
           <span v-show="scope.row.editFlag"><el-input v-model="editDisease.level"></el-input></span>
         </template>
         </el-table-column>
+        <el-table-column
+          prop="note"
+          label="备注"
+          sortable
+        ><template slot-scope="scope">
+          <span v-show="!scope.row.editFlag">{{scope.row.note}}</span>
+          <span v-show="scope.row.editFlag"><el-input v-model="editDisease.note"></el-input></span>
+        </template>
+        </el-table-column>
       </disease-table>
     </el-row>
   </div>
@@ -56,6 +65,7 @@ export default {
       editDisease:{
         disease:null,
         level:null,
+        note:null
       }
     }
   },
@@ -82,7 +92,6 @@ export default {
     },
     editHandler(row){
       //modify data locally
-      console.log("in editHandler");
       row.editFlag=true;
       // this.tableData = Object.assign([],this.tableData);
       this.$set(this.tableData,this.tableData.indexOf(row),row);
@@ -90,11 +99,13 @@ export default {
     },
     deleteHandler(row){
       this.tableData.splice(this.tableData.indexOf(row),1);
-      //send delete data request
+      this.deleteDiseaseById(row.id);
     },
     acceptHandler(row){
+      var isAdd = false;
       if(this.addFlag){
         this.addFlag=false;
+        isAdd = true;
         if(!this.isNewRowValidated(this.editDisease)){
           alert("病名不能为空");
           return;
@@ -102,7 +113,12 @@ export default {
       }
       this.editDisease.editFlag=false;
       this.$set(this.tableData,this.tableData.indexOf(row),this.editDisease);
-      //send modify data request
+
+      if(isAdd) {
+        this.addNewDisease(this.tableData[0]);
+      } else {
+        this.postEditDisease();
+      }
     },
     cancelHandler(row){
       if(this.addFlag){
@@ -126,7 +142,56 @@ export default {
       this.editDisease={
         disease:null,
         level:null,
+        note:null
       }
+    },
+    addNewDisease(row) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/add',
+        data: {
+          disease: self.editDisease.disease,
+          level: self.editDisease.level,
+          note: self.editDisease.note
+        }
+      }).then(function(res) {
+        console.log(res.data);
+        row.id = res.data.id;
+      }).catch(function(res) {
+
+      });
+    },
+    postEditDisease() {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/edit',
+        data: {
+          id: self.editDisease.id,
+          disease: self.editDisease.disease,
+          level: self.editDisease.level,
+          note: self.editDisease.note
+        }
+      }).then(function(res) {
+        console.log(res.data);
+      }).catch(function(res) {
+
+      });
+    },
+    deleteDiseaseById(id) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/delete',
+        data: {
+          id: id
+        }
+      }).then(function(res) {
+        console.log(res.data);
+      }).catch(function(res) {
+
+      });
     }
   },
   mounted(){

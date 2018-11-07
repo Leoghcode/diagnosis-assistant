@@ -36,18 +36,18 @@
 <script>
 import presTemplateTable from '../common/MyTable';
 import prescriptionTable from './prescriptionTable';
-import {presOptions2, presDetails} from '../../assets/mock/mockPresTemplates';
+// import {presOptions2, presDetails} from '../../assets/mock/mockPresTemplates';
 
 export default {
   data(){
     return{
       addFlag:false,
+      // [{name: t1, medicineTemplateRecords: [{medicine: A, dose: 2}, {}]}]
       tableData: [],
       queryString:null,
       placeholder:"请输入处方名",
       editPresTemplate:{
-        name:null,
-        medicines:null,
+        name:null
       }
     }
   },
@@ -79,7 +79,6 @@ export default {
     },
     editHandler(row){
       //modify data locally
-      console.log("in editHandler");
       row.editFlag=true;
       // this.tableData = Object.assign([],this.tableData);
       this.$set(this.tableData,this.tableData.indexOf(row),row);
@@ -88,10 +87,13 @@ export default {
     deleteHandler(row){
       this.tableData.splice(this.tableData.indexOf(row),1);
       //send delete data request
+      this.deleteTemplate(row.id);
     },
     acceptHandler(row){
+      var isAdd = false;
       if(this.addFlag){
         this.addFlag=false;
+        isAdd = true;
         if(!this.isNewRowValidated(this.editPresTemplate)){
           alert("处方名不能为空");
           return;
@@ -100,6 +102,12 @@ export default {
       this.editPresTemplate.editFlag=false;
       this.$set(this.tableData,this.tableData.indexOf(row),this.editPresTemplate);
       //send modify data request
+      if(isAdd) {
+        var curRow = this.tableData[0];
+        this.addNewEmptyTemplate(curRow);
+      } else {
+        this.editTemplateName();
+      }
     },
     cancelHandler(row){
       if(this.addFlag){
@@ -111,7 +119,7 @@ export default {
       //abort modification
     },
     viewHandler(row) {
-      this.$emit("view", presDetails[row.name]);
+      this.$emit("view", row);
     },
     isNewRowValidated(row){
       return (!this.isEmpty(row.name));
@@ -121,8 +129,7 @@ export default {
     },
     reseteditPresTemplate(){
       this.editPresTemplate={
-        name:null,
-        medicines:null,
+        name:null
       }
     },
     getPresTemplate() {
@@ -134,7 +141,55 @@ export default {
           diseaseId: self.disease
         }
       }).then(function(res) {
-        self.tableData = res.data.diseaseTemplateList;
+        self.tableData = res.data.medicineTemplateList;
+      }).catch(function(res) {
+
+      });
+    },
+    addNewEmptyTemplate(row) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/addTemplate',
+        data: {
+          diseaseId: self.disease,
+          medicineTemplate: {
+            name: row.name,
+            medicineTemplateRecords: []
+          }
+        }
+      }).then(function(res) {
+        console.log(res.data);
+        row.id = res.data.id;
+      }).catch(function(res) {
+
+      });
+    },
+    editTemplateName() {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/editTemplate',
+        data: {
+          id: self.editPresTemplate.id,
+          name: self.editPresTemplate.name
+        }
+      }).then(function(res) {
+        console.log(res.data);
+      }).catch(function(res) {
+
+      });
+    },
+    deleteTemplate(id) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/deleteTemplate',
+        data: {
+         id: id
+        }
+      }).then(function(res) {
+        console.log(res.data);
       }).catch(function(res) {
 
       });
@@ -145,7 +200,6 @@ export default {
       elem.editFlag=false;//设置每条记录的编辑标签名为editFlag
     });
     this.tableData = Object.assign([],this.tableData);
-    console.log(this.tableData);
   }
 }
 </script>

@@ -25,20 +25,20 @@
           </template>
           </el-table-column>
           <el-table-column
-            prop="number"
+            prop="totalDose"
             label="数量"
             sortable
           ><template slot-scope="scope">
-            <span v-show="!scope.row.editFlag">{{scope.row.number}}</span>
-            <span v-show="scope.row.editFlag"><el-input v-model="editPrescription.number"></el-input></span>
+            <span v-show="!scope.row.editFlag">{{scope.row.totalDose}}</span>
+            <span v-show="scope.row.editFlag"><el-input v-model="editPrescription.totalDose"></el-input></span>
           </template>
           </el-table-column>
           <el-table-column
-            prop="usage"
+            prop="instruction"
             label="用法"
           ><template slot-scope="scope">
-            <span v-show="!scope.row.editFlag">{{scope.row.usage}}</span>
-            <span v-show="scope.row.editFlag"><el-input v-model="editPrescription.usage"></el-input></span>
+            <span v-show="!scope.row.editFlag">{{scope.row.instruction}}</span>
+            <span v-show="scope.row.editFlag"><el-input v-model="editPrescription.instruction"></el-input></span>
           </template>
           </el-table-column>
         </prescription-table>
@@ -48,8 +48,8 @@
           <div slot="header">
             <span>处方说明</span>
           </div>
-          <div v-show="tableData.length != 0" class="margin-top-m20 text-left">
-            <p>东营中医院藏医科推荐经典藏药-- 二十五味珊瑚丸，在治疗神经疼痛方面有独特的疗效，特别是偏头疼，癫痫，神经疼等。</p>
+          <div class="margin-top-m20 text-left">
+            <p>{{note}}</p>
           </div>
         </el-card>
       </el-col>
@@ -69,25 +69,34 @@ export default {
       // tableData: Object.assign([],this.store),
       tableData: [],
       editPrescription:{
-        name:null,
-        id:null,
-        risk:null,
-      }
+        medicine: null,
+        totalDose: null,
+        instruction: null,
+        note: null
+      },
+      note: ''
     }
   },
   props:{
     // prescription: String,
     loading: Boolean,
-    store:Array
+    presDetail: Object
   },
   watch:{
-    store: {
+    presDetail: {
       handler(val) {
-        var self = this;
-        window.setTimeout(function(){
-          self.$emit('update:loading', false);
-          self.tableData = val;
-        }, 800);
+        console.log(val);
+        if(val != null && val != {}) {
+          var self = this;
+          window.setTimeout(function(){
+            self.$emit('update:loading', false);
+            self.tableData = val.medicineTemplateRecords;
+            self.note = "aaa";
+          }, 800);
+        } else {
+          self.tableData = [];
+          self.note = "";
+        }
       }
     }
   },
@@ -96,26 +105,24 @@ export default {
   },
   methods:{
     addHandler(){
-      //modify data locally
       this.addFlag=true;
       this.reseteditPrescription();
       this.tableData.unshift({...this.editPrescription,editFlag:true});
     },
     editHandler(row){
-      //modify data locally
-      console.log("in editHandler");
       row.editFlag=true;
-      // this.tableData = Object.assign([],this.tableData);
       this.$set(this.tableData,this.tableData.indexOf(row),row);
       this.editPrescription=Object.assign({},row);
     },
     deleteHandler(row){
       this.tableData.splice(this.tableData.indexOf(row),1);
-      //send delete data request
+      this.deleteRecord(row.id);
     },
     acceptHandler(row){
+      var isAdd = false;
       if(this.addFlag){
         this.addFlag=false;
+        isAdd = true;
         if(!this.isNewRowValidated(this.editPrescription)){
           alert("药名和用量不能为空");
           return;
@@ -124,6 +131,11 @@ export default {
       this.editPrescription.editFlag=false;
       this.$set(this.tableData,this.tableData.indexOf(row),this.editPrescription);
       //send modify data request
+      if(isAdd) {
+        this.addNewRecord(this.tableData[0]);
+      } else {
+        this.editOriginRecord();
+      }
     },
     cancelHandler(row){
       if(this.addFlag){
@@ -135,7 +147,7 @@ export default {
       //abort modification
     },
     isNewRowValidated(row){
-      return (!this.isEmpty(row.medicine)&&!this.isEmpty(row.number));
+      return (!this.isEmpty(row.medicine)&&!this.isEmpty(row.totalDose));
     },
     isEmpty(string){
       return (string===undefined||string===null||string==="")?true:false;
@@ -143,9 +155,64 @@ export default {
     reseteditPrescription(){
       this.editPrescription={
         medicine:null,
-        number:null,
-        usage:null,
+        totalDose:null,
+        instruction:null,
+        note: null
       }
+    },
+    addNewRecord(row) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/addTemplateRecord',
+        data: {
+          templateId: self.presDetail.id,
+          medicineTemplateRecord: {
+            medicine: row.medicine,
+            totalDose: row.totalDose,
+            instruction: row.instruction,
+            note: row.note
+          }
+        }
+      }).then(function(res) {
+        console.log(res.data);
+        row.id = res.data.id;
+      }).catch(function(res) {
+
+      });
+    },
+    editOriginRecord() {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/editTemplateRecord',
+        data: {
+          id: this.editPrescription.id,
+          medicine: this.editPrescription.medicine,
+          totalDose: this.editPrescription.totalDose,
+          instruction: this.editPrescription.instruction,
+          note: this.editPrescription.note
+        }
+      }).then(function(res) {
+        console.log(res.data);
+        row.id = res.data.id;
+      }).catch(function(res) {
+
+      });
+    },
+    deleteRecord(id) {
+      var self = this;
+      self.$axios({
+        method: 'post',
+        url: '/api/disease/deleteTemplateRecord',
+        data: {
+         id: id
+        }
+      }).then(function(res) {
+        console.log(res.data);
+      }).catch(function(res) {
+
+      });
     }
   },
   mounted(){

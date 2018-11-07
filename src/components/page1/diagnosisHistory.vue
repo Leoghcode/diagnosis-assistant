@@ -38,7 +38,7 @@
         </el-table-column>
       </el-table>
       <el-row>
-        <ill-case-form :open.sync="illFormOpen"></ill-case-form>
+        <ill-case-form :open.sync="illFormOpen" :patient-id="patientId" :pre-case-data="preCaseData" @newcase="addNewCase"></ill-case-form>
       </el-row>
     </el-row>
   </div>
@@ -61,7 +61,7 @@
       }
     },
     props: [
-      'caseHistory','loading'
+      'patientId', 'caseHistory','loading', 'preCaseData'
     ],
     watch: {
       caseHistory: {
@@ -87,6 +87,10 @@
       },
       checkDetail(val){
         this.$emit('check-detail', val.id);
+      },
+      addNewCase(newCase) {
+        // {id: 3, fee: 200, onset: null, dateTime: "43162", description: "情况严重"}
+        this.filterHistories.push(newCase);
       }
     }
   }

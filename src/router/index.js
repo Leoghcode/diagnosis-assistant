@@ -16,7 +16,7 @@ export default new Router({
     },
     {
       path: '/nurse',
-      name: 'nurse',
+      name: 'page4',
       component: nurse
     },
     {

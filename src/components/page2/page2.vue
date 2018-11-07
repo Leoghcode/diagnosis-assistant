@@ -22,7 +22,7 @@
       </el-col>
       <el-col :sm="24" :md="16">
         <el-card class="box-card-300">
-          <prescription-table :store="presDetail" :loading.sync="presDetailSearch"></prescription-table>
+          <prescription-table :pres-detail="presDetail" :loading.sync="presDetailSearch"></prescription-table>
         </el-card>
       </el-col>
     </el-row>
@@ -48,7 +48,7 @@
         disease: '',
         detailSearch: false,
         presSearch: false,
-        presDetail: [],
+        presDetail: null,
         presDetailSearch: false
       }
     },
@@ -63,12 +63,12 @@
       showPresDetail(presDetail) {
         // console.log("in showPresDetail: " + presDetail);
         this.presDetail = presDetail;
-        if(presDetail != []) {
+        if(presDetail != {}) {
           this.presDetailSearch = true;
         }
       },
       cleanPresDetail() {
-        this.presDetail = [];
+        this.presDetail = {};
       }
     }
   }
